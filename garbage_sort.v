@@ -2,84 +2,85 @@ module GarbageSortTop (
     input clk,
     input rst,
     input [23:0] d_in,
-    input conv_start
+    input conv_start,
+    output reg [127:0] pool_out
 );
 
-    // µÚ1²ã¾í»ýÊ¹ÄÜÐÅºÅ
+    // ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Åºï¿?
     wire image_input_ready;
-    // µÚ1²ã¾í»ý8²ã¾í»ýÊä³ö
+    // ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿?8ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     wire [63:0] layer_1_conv_tmp;
-    // µÚ1²ã¾í»ýÊä³öÓÐÐ§ÐÅºÅ
+    // ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Åºï¿½
     wire conv_1_ready;
-    // µÚ1²ã¾í»ý¼ÆËãÍê³ÉÐÅºÅ
+    // ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
     wire conv_1_complete;
-    // µÚ2²ã¾í»ý¿ªÊ¼ÐÅºÅ
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½Åºï¿?
     wire layer_1_input_ready;
-    // µÚ2²ã¾í»ýÐ´µØÖ·
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ö?
     wire [6:0] conv_2_ram_write_addr;
-    // µÚ2²ã¾í»ýÊä³ö
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     wire [7:0] layer_2_conv_tmp [15:0];
-    // µÚ2²ã¾í»ýÊä³öÓÐÐ§ÐÅºÅ
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Åºï¿½
     wire conv_2_ready;
-    // µÚ2²ã¾í»ý¼ÆËãÍê³ÉÐÅºÅ
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
     wire conv_2_complete;
-    // µÚ2²ã¾í»ýramÊä³ö
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ramï¿½ï¿½ï¿?
     wire [7:0] layer_2_conv [15:0];
-    // µÚ2²ã¾í»ýramÐ´Íê³ÉÐÅºÅ
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ramÐ´ï¿½ï¿½ï¿½ï¿½Åºï¿?
     wire conv_2_write_complete;
-    // µÚ3²ã³Ø»¯¶ÁÊ¹ÄÜÐÅºÅ
+    // ï¿½ï¿½3ï¿½ï¿½Ø»ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Åºï¿?
     wire layer_3_read_en;
-    // µÚ3²ã³Ø»¯¶ÁµØÖ·
+    // ï¿½ï¿½3ï¿½ï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½Ö?
     wire [6:0] layer_3_read_addr;
-    // µÚ3²ã³Ø»¯¿ªÊ¼ÐÅºÅ
+    // ï¿½ï¿½3ï¿½ï¿½Ø»ï¿½ï¿½ï¿½Ê¼ï¿½Åºï¿?
     wire layer_3_relu_begin;
-    // µÚ3²ã³Ø»¯Êä³ö
+    // ï¿½ï¿½3ï¿½ï¿½Ø»ï¿½ï¿½ï¿½ï¿½
     wire [7:0] layer_3_max_tmp [15:0];
-    // µÚ3²ã³Ø»¯Êä³öÓÐÐ§ÐÅºÅ
+    // ï¿½ï¿½3ï¿½ï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Åºï¿½
     wire relu_3_ready;
-    // µÚ3²ã³Ø»¯Íê³ÉÐÅºÅ
+    // ï¿½ï¿½3ï¿½ï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
     wire relu_3_complete;
 
-    // ÓÃÓÚÈ·¶¨µÚ1²ã¾í»ýÊ²Ã´Ê±ºò¿ªÊ¼
+    // ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ê²Ã´Ê±ï¿½ï¿½Ê?
     ImageInput ImageInput(.clk(clk), .rst(rst), .conv_start(conv_start), .image_input_ready(image_input_ready));
 
-    // µÚ1²ã¾í»ý
+    // ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿?
     genvar j;
     generate
         for(j = 0; j < 8; j = j + 1)
         begin: g0
-            // ¼õÉÙÐÅºÅÏß
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½
             if(j == 0) begin
-                Conv1_1 Conv1_1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
+                Conv1 Conv1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
                     .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]), .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete));
             end
             else begin
-                Conv1_1 Conv1_1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
+                Conv1 Conv1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
                     .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]));
             end
         end
     endgenerate
 
-    // ÓÃÓÚÈ·¶¨µÚ2²ã¾í»ýÊ²Ã´Ê±ºò¿ªÊ¼
+    // ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½Ê²Ã´Ê±ï¿½ï¿½Ê?
     Layer1Input Layer1Input(.clk(clk), .rst(rst), .conv_start(conv_start), .conv_1_ready(conv_1_ready),
         .layer_1_input_ready(layer_1_input_ready));
 
-    // µÚ2²ã¾í»ý
+    // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿?
     genvar i;
     generate
         for(i = 0; i < 16; i = i + 1)
         begin: g1
-            // ¼õÉÙÐÅºÅÏß
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½
             if(i == 0) begin
-                // µÚ2²ã¾í»ý
+                // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿?
                 Conv2 Conv2(.clk(clk), .rst(rst), .d_in(layer_1_conv_tmp), .conv_start(conv_start), .layer_1_input_ready(layer_1_input_ready),
                     .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete), .d_out(layer_2_conv_tmp[i]),
                     .ram_write_addr(conv_2_ram_write_addr), .conv_2_ready(conv_2_ready), .conv_2_complete(conv_2_complete));
-                // µÚ2²ã¾í»ý»º´æ
+                // ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
                 Layer2Input Layer2Input(.clk(clk), .rst(rst), .d_in(layer_2_conv_tmp[i]), .conv_start(conv_start), .wr_en(conv_2_ready),
                     .rd_en(layer_3_read_en), .wr_addr(conv_2_ram_write_addr), .rd_addr(layer_3_read_addr), .d_out(layer_2_conv[i]),
                     .conv_2_write_complete(conv_2_write_complete), .layer_3_relu_begin(layer_3_relu_begin));
-                // µÚ3²ã³Ø»¯
+                // ï¿½ï¿½3ï¿½ï¿½Ø»ï¿?
                 Relu3 Relu3(.clk(clk), .rst(rst), .layer_3_relu_begin(layer_3_relu_begin), .d_in(layer_2_conv[i]), .conv_2_ready(conv_2_ready),
                     .conv_2_write_complete(conv_2_write_complete), .d_out(layer_3_max_tmp[i]), .rd_en(layer_3_read_en),
                     .layer_3_read_addr(layer_3_read_addr), .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete));
@@ -95,5 +96,22 @@ module GarbageSortTop (
             end
         end
     endgenerate
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            pool_out <= 128'd0;
+        end
+        else begin
+            if(relu_3_ready) begin
+                pool_out <= {layer_3_max_tmp[15], layer_3_max_tmp[14], layer_3_max_tmp[13], layer_3_max_tmp[12],
+                            layer_3_max_tmp[11], layer_3_max_tmp[10], layer_3_max_tmp[9], layer_3_max_tmp[8],
+                            layer_3_max_tmp[7], layer_3_max_tmp[6], layer_3_max_tmp[5], layer_3_max_tmp[4], 
+                            layer_3_max_tmp[3], layer_3_max_tmp[2], layer_3_max_tmp[1], layer_3_max_tmp[0]};
+            end
+            else begin
+                pool_out <= 128'd0;
+            end
+        end
+    end
 
 endmodule
