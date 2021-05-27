@@ -1,2 +1,2 @@
-# Garbage-Sorting-Network-
-Realize a convolution net for garbage sorting
+# Garbage Sorting Network
+This repository realize a convolution network which can identify different garbage. The weight params need to be load into memory.
