@@ -38,7 +38,7 @@ module GarbageSortTop # (
     // 第3层池化开始信号
     wire layer_3_relu_begin;
     // 第3层池化输出
-    wire [7:0] layer_3_max_tmp [15:0];
+    wire [127:0] layer_3_max_tmp;
     // 第3层池化输出有效信号
     wire relu_3_ready;
     // 第3层池化完成信号
@@ -85,7 +85,7 @@ module GarbageSortTop # (
                     .conv_2_write_complete(conv_2_write_complete), .layer_3_relu_begin(layer_3_relu_begin));
                 // 第3层池化
                 Relu3 Relu3(.clk(clk), .rst(rst), .layer_3_relu_begin(layer_3_relu_begin), .d_in(layer_2_conv[i]), .conv_2_ready(conv_2_ready),
-                    .conv_2_write_complete(conv_2_write_complete), .d_out(layer_3_max_tmp[i]), .rd_en(layer_3_read_en),
+                    .conv_2_write_complete(conv_2_write_complete), .d_out(layer_3_max_tmp[8 * (i + 1) - 1:8 * i]), .rd_en(layer_3_read_en),
                     .layer_3_read_addr(layer_3_read_addr), .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete));
             end
             else begin
@@ -95,7 +95,7 @@ module GarbageSortTop # (
                     .rd_en(layer_3_read_en), .wr_addr(conv_2_ram_write_addr), .rd_addr(layer_3_read_addr),
                     .d_out(layer_2_conv[i]));
                 Relu3 Relu3(.clk(clk), .rst(rst), .layer_3_relu_begin(layer_3_relu_begin), .d_in(layer_2_conv[i]), .conv_2_ready(conv_2_ready),
-                    .conv_2_write_complete(conv_2_write_complete), .d_out(layer_3_max_tmp[i]));
+                    .conv_2_write_complete(conv_2_write_complete), .d_out(layer_3_max_tmp[8 * (i + 1) - 1:8 * i]));
             end
         end
     endgenerate
@@ -106,10 +106,10 @@ module GarbageSortTop # (
         end
         else begin
             if(relu_3_ready) begin
-                pool_out <= {layer_3_max_tmp[15], layer_3_max_tmp[14], layer_3_max_tmp[13], layer_3_max_tmp[12],
-                            layer_3_max_tmp[11], layer_3_max_tmp[10], layer_3_max_tmp[9], layer_3_max_tmp[8],
-                            layer_3_max_tmp[7], layer_3_max_tmp[6], layer_3_max_tmp[5], layer_3_max_tmp[4], 
-                            layer_3_max_tmp[3], layer_3_max_tmp[2], layer_3_max_tmp[1], layer_3_max_tmp[0]};
+                pool_out <= {layer_3_max_tmp[127:120], layer_3_max_tmp[119:112], layer_3_max_tmp[111:104], layer_3_max_tmp[103:96],
+                            layer_3_max_tmp[95:88], layer_3_max_tmp[87:80], layer_3_max_tmp[79:72], layer_3_max_tmp[71:64],
+                            layer_3_max_tmp[63:56], layer_3_max_tmp[55:48], layer_3_max_tmp[47:40], layer_3_max_tmp[39:32], 
+                            layer_3_max_tmp[31:24], layer_3_max_tmp[23:16], layer_3_max_tmp[15:8], layer_3_max_tmp[7:0]};
             end
             else begin
                 pool_out <= 128'd0;

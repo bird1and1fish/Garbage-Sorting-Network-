@@ -58,11 +58,11 @@ module Conv2 # (
 
     wire calculate_begin = (state == WAIT_CONV1 && conv_1_ready) || state == GO_ON;
 
-    // 输入图像大小为26x26x8，卷积核大小为3x3x8
+    // 输入图像大小为26x26x8，卷积核大小为3x3x8x16
     parameter img_raw = 5'd26;
     parameter img_line = 5'd26;
     parameter img_size = 10'd676;
-    parameter convolution_size = 7'd78;
+    parameter convolution_size = 7'd78;// 3x26
     parameter kernel_count = 4'd9;
     parameter kernel_size = 2'd3;
 
@@ -134,8 +134,8 @@ module Conv2 # (
                 CONV_START: begin
                     if(conv_1_ready) begin
                         mult_data[2] <= shift_reg[0];
-                        mult_data[5] <= shift_reg[28];
-                        mult_data[8] <= shift_reg[56];
+                        mult_data[5] <= shift_reg[26];
+                        mult_data[8] <= shift_reg[52];
                         for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                             mult_data[j] <= mult_data[j + 1];
                             mult_data[j + 3] <= mult_data[j + 3 + 1];
@@ -147,8 +147,8 @@ module Conv2 # (
                 WAIT_CONV1: begin
                     if(conv_1_ready) begin
                         mult_data[2] <= shift_reg[0];
-                        mult_data[5] <= shift_reg[28];
-                        mult_data[8] <= shift_reg[56];
+                        mult_data[5] <= shift_reg[26];
+                        mult_data[8] <= shift_reg[52];
                         for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                             mult_data[j] <= mult_data[j + 1];
                             mult_data[j + 3] <= mult_data[j + 3 + 1];
@@ -159,8 +159,8 @@ module Conv2 # (
                 // 第一层卷积输出完毕，不需要等待conv_1_ready信号
                 GO_ON: begin
                     mult_data[2] <= shift_reg[0];
-                    mult_data[5] <= shift_reg[28];
-                    mult_data[8] <= shift_reg[56];
+                    mult_data[5] <= shift_reg[26];
+                    mult_data[8] <= shift_reg[52];
                     for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                         mult_data[j] <= mult_data[j + 1];
                         mult_data[j + 3] <= mult_data[j + 3 + 1];
@@ -243,43 +243,15 @@ module Conv2 # (
 
     always @(posedge clk) begin
         if(!rst) begin
-            adder_1 <= 18'd0;
-            adder_2 <= 18'd0;
-            adder_3 <= 18'd0;
-            adder_4 <= 18'd0;
-            adder_5 <= 18'd0;
-            adder_6 <= 18'd0;
-            adder_7 <= 18'd0;
-            adder_8 <= 18'd0;
-            adder_9 <= 18'd0;
-            adder_10 <= 18'd0;
-            adder_11 <= 18'd0;
-            adder_12 <= 18'd0;
-            adder_13 <= 18'd0;
-            adder_14 <= 18'd0;
-            adder_15 <= 18'd0;
-            adder_16 <= 18'd0;
-            adder_17 <= 18'd0;
-            adder_18 <= 18'd0;
-            adder_19 <= 18'd0;
-            adder_20 <= 18'd0;
-            adder_21 <= 18'd0;
-            adder_22 <= 18'd0;
-            adder_23 <= 18'd0;
-            adder_24 <= 18'd0;
-            adder_25 <= 20'd0;
-            adder_26 <= 20'd0;
-            adder_27 <= 20'd0;
-            adder_28 <= 20'd0;
-            adder_29 <= 20'd0;
-            adder_30 <= 20'd0;
-            adder_31 <= 20'd0;
-            adder_32 <= 20'd0;
-            adder_33 <= 21'd0;
-            adder_34 <= 21'd0;
-            adder_35 <= 21'd0;
+            adder_1 <= 18'd0; adder_2 <= 18'd0; adder_3 <= 18'd0; adder_4 <= 18'd0; adder_5 <= 18'd0; adder_6 <= 18'd0;
+            adder_7 <= 18'd0; adder_8 <= 18'd0; adder_9 <= 18'd0; adder_10 <= 18'd0; adder_11 <= 18'd0; adder_12 <= 18'd0;
+            adder_13 <= 18'd0; adder_14 <= 18'd0; adder_15 <= 18'd0; adder_16 <= 18'd0; adder_17 <= 18'd0; adder_18 <= 18'd0;
+            adder_19 <= 18'd0; adder_20 <= 18'd0; adder_21 <= 18'd0; adder_22 <= 18'd0; adder_23 <= 18'd0; adder_24 <= 18'd0;
+            adder_25 <= 20'd0; adder_26 <= 20'd0; adder_27 <= 20'd0; adder_28 <= 20'd0; adder_29 <= 20'd0; adder_30 <= 20'd0;
+            adder_31 <= 20'd0; adder_32 <= 20'd0;
+            adder_33 <= 21'd0; adder_34 <= 21'd0; adder_35 <= 21'd0;
             adder_36 <= 23'd0;
-            d_out <= adder_36;
+            d_out <= 8'd0;
         end
         else begin
             case(state)
@@ -400,43 +372,15 @@ module Conv2 # (
                     end
                 end
                 default: begin
-                    adder_1 <= 18'd0;
-                    adder_2 <= 18'd0;
-                    adder_3 <= 18'd0;
-                    adder_4 <= 18'd0;
-                    adder_5 <= 18'd0;
-                    adder_6 <= 18'd0;
-                    adder_7 <= 18'd0;
-                    adder_8 <= 18'd0;
-                    adder_9 <= 18'd0;
-                    adder_10 <= 18'd0;
-                    adder_11 <= 18'd0;
-                    adder_12 <= 18'd0;
-                    adder_13 <= 18'd0;
-                    adder_14 <= 18'd0;
-                    adder_15 <= 18'd0;
-                    adder_16 <= 18'd0;
-                    adder_17 <= 18'd0;
-                    adder_18 <= 18'd0;
-                    adder_19 <= 18'd0;
-                    adder_20 <= 18'd0;
-                    adder_21 <= 18'd0;
-                    adder_22 <= 18'd0;
-                    adder_23 <= 18'd0;
-                    adder_24 <= 18'd0;
-                    adder_25 <= 20'd0;
-                    adder_26 <= 20'd0;
-                    adder_27 <= 20'd0;
-                    adder_28 <= 20'd0;
-                    adder_29 <= 20'd0;
-                    adder_30 <= 20'd0;
-                    adder_31 <= 20'd0;
-                    adder_32 <= 20'd0;
-                    adder_33 <= 21'd0;
-                    adder_34 <= 21'd0;
-                    adder_35 <= 21'd0;
+                    adder_1 <= 18'd0; adder_2 <= 18'd0; adder_3 <= 18'd0; adder_4 <= 18'd0; adder_5 <= 18'd0; adder_6 <= 18'd0;
+                    adder_7 <= 18'd0; adder_8 <= 18'd0; adder_9 <= 18'd0; adder_10 <= 18'd0; adder_11 <= 18'd0; adder_12 <= 18'd0;
+                    adder_13 <= 18'd0; adder_14 <= 18'd0; adder_15 <= 18'd0; adder_16 <= 18'd0; adder_17 <= 18'd0; adder_18 <= 18'd0;
+                    adder_19 <= 18'd0; adder_20 <= 18'd0; adder_21 <= 18'd0; adder_22 <= 18'd0; adder_23 <= 18'd0; adder_24 <= 18'd0;
+                    adder_25 <= 20'd0; adder_26 <= 20'd0; adder_27 <= 20'd0; adder_28 <= 20'd0; adder_29 <= 20'd0; adder_30 <= 20'd0;
+                    adder_31 <= 20'd0; adder_32 <= 20'd0;
+                    adder_33 <= 21'd0; adder_34 <= 21'd0; adder_35 <= 21'd0;
                     adder_36 <= 23'd0;
-                    d_out <= adder_36;
+                    d_out <= 8'd0;
                 end
             endcase
         end

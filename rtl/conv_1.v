@@ -41,11 +41,11 @@ module Conv1 # (
 
     wire calculate_begin = image_input_ready && state == BUSY;
 
-    // 输入图像大小为28x28x3，卷积核大小为3x3x3
+    // 输入图像大小为28x28x3，卷积核大小为3x3x3x8
     parameter img_raw = 5'd28;
     parameter img_line = 5'd28;
     parameter img_size = 10'd784;
-    parameter convolution_size = 7'd84;
+    parameter convolution_size = 7'd84;// 3x28
     parameter kernel_count = 4'd9;
     parameter kernel_size = 2'd3;
 
