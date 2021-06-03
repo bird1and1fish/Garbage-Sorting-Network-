@@ -1,4 +1,6 @@
-module Conv1(
+module Conv1 # (
+    parameter CONV1_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv1.hex"
+) (
     input clk,
     input rst,
     input [23:0] d_in,
@@ -9,7 +11,7 @@ module Conv1(
     output conv_1_complete
 );
 
-    // ÄÚÖÃ×´Ì¬»ú£¬È·±£³ÌĞò¿ÉÖØ¸´Ö´ĞĞ£¬conv_startĞÅºÅ¹ıÒ»¸öÊ±ÖÓÖÜÆÚºó¿ªÊ¼ÊäÈëÍ¼Ïñ
+    // å†…ç½®çŠ¶æ€æœºï¼Œç¡®ä¿ç¨‹åºå¯é‡å¤æ‰§è¡Œï¼Œconv_startä¿¡å·è¿‡ä¸€ä¸ªæ—¶é’Ÿå‘¨æœŸåå¼€å§‹è¾“å…¥å›¾åƒ
     parameter 
         VACANT = 3'd0,
         BUSY = 3'd1;
@@ -39,7 +41,7 @@ module Conv1(
 
     wire calculate_begin = image_input_ready && state == BUSY;
 
-    // ÊäÈëÍ¼Ïñ´óĞ¡Îª28x28x3£¬¾í»ıºË´óĞ¡Îª3x3x3
+    // è¾“å…¥å›¾åƒå¤§å°ä¸º28x28x3ï¼Œå·ç§¯æ ¸å¤§å°ä¸º3x3x3
     parameter img_raw = 5'd28;
     parameter img_line = 5'd28;
     parameter img_size = 10'd784;
@@ -47,7 +49,7 @@ module Conv1(
     parameter kernel_count = 4'd9;
     parameter kernel_size = 2'd3;
 
-    // ÒÆÎ»¼Ä´æÆ÷»º´æ3ÅÅÊı¾İ
+    // ç§»ä½å¯„å­˜å™¨ç¼“å­˜3æ’æ•°æ®
     reg [23:0] shift_reg [convolution_size - 1:0];
     reg [6:0] i = 7'd0;
     always @(posedge clk) begin
@@ -74,10 +76,14 @@ module Conv1(
         end
     end
 
-    // ´ÓramÖĞ¶ÁÈ¡3x3x3´óĞ¡¾í»ıºË
-    reg [23:0] k1 [kernel_count - 1:0];
+    // ä»ramä¸­è¯»å–3x3x3å¤§å°å·ç§¯æ ¸
+    reg [23:0] k1 [0:kernel_count - 1];
+    initial begin
+        (*rom_style = "block"*) $readmemh(CONV1_HEX_FILE_PATH, k1);
+    end
 
-    // ¶ÁÈ¡3x3x3¾í»ıÊı¾İ
+
+    // è¯»å–3x3x3å·ç§¯æ•°æ®
     reg [23:0] mult_data [kernel_count - 1:0];
     reg [3:0] j = 4'd0;
     always @(posedge clk) begin
@@ -109,7 +115,7 @@ module Conv1(
         end
     end
 
-    // ³Ë·¨ÔËËã
+    // ä¹˜æ³•è¿ç®—
     wire [15:0] mult [3 * kernel_count - 1:0];
     genvar k;
     generate
@@ -124,7 +130,7 @@ module Conv1(
         end
     endgenerate
 
-    // ¼Ó·¨ÔËËã
+    // åŠ æ³•è¿ç®—
     reg [17:0] adder_1 = 18'd0;
     reg [17:0] adder_2 = 18'd0;
     reg [17:0] adder_3 = 18'd0;
@@ -174,7 +180,7 @@ module Conv1(
                 adder_12 <= adder_7 + adder_8 + adder_9;
 
                 adder_13 <= adder_10 + adder_11 + adder_12;
-                // ÓÒÒÆ´úÌæ³ı·¨£¬×¢ÒâËÄÉáÎåÈë
+                // å³ç§»ä»£æ›¿é™¤æ³•ï¼Œæ³¨æ„å››èˆäº”å…¥
                 // if(adder_13[12])
                 //     d_out <= (adder_13 >> 13) + 8'd1;
                 // else
@@ -200,7 +206,7 @@ module Conv1(
         end
     end
 
-    // ÅĞ¶ÏÊä³öÓĞĞ§£¬image_input_readyµÚ5ÅÄºód_outÊı¾İÓĞĞ§
+    // åˆ¤æ–­è¾“å‡ºæœ‰æ•ˆï¼Œimage_input_readyç¬¬5æ‹åd_outæ•°æ®æœ‰æ•ˆ
     parameter out_ready = 3'd5;
     parameter out_end = 10'd680;// 26 x 26 + 5 - 1
     reg [9:0] out_count = 10'd0;

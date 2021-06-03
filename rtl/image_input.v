@@ -5,7 +5,7 @@ module ImageInput(
     output image_input_ready
 );
 
-    // ÄÚÖÃ×´Ì¬»ú£¬È·±£³ÌĞò¿ÉÖØ¸´Ö´ĞĞ£¬conv_startĞÅºÅ¹ıÒ»¸öÊ±ÖÓÖÜÆÚºó¿ªÊ¼ÊäÈëÍ¼Ïñ
+    // å†…ç½®çŠ¶æ€æœºï¼Œç¡®ä¿ç¨‹åºå¯é‡å¤æ‰§è¡Œï¼Œconv_startä¿¡å·è¿‡ä¸€ä¸ªæ—¶é’Ÿå‘¨æœŸåå¼€å§‹è¾“å…¥å›¾åƒ
     reg image_input_complete = 1'b0;
     parameter 
         VACANT = 3'd0,
@@ -34,7 +34,7 @@ module ImageInput(
         end
     end
 
-    // ÊäÈëÍ¼Ïñ´óĞ¡Îª28x28x3£¬¾í»ıºË´óĞ¡Îª3x3x3
+    // è¾“å…¥å›¾åƒå¤§å°ä¸º28x28x3ï¼Œå·ç§¯æ ¸å¤§å°ä¸º3x3x3
     parameter img_size = 10'd784;
     parameter convolution_size = 7'd84;
     parameter kernel_size = 2'd3;

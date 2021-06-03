@@ -12,7 +12,7 @@ module Relu3(
     output relu_3_complete
 );
 
-    // ÄÚÖÃ×´Ì¬»ú£¬È·±£³ÌĞò¿ÉÖØ¸´Ö´ĞĞ
+    // å†…ç½®çŠ¶æ€æœºï¼Œç¡®ä¿ç¨‹åºå¯é‡å¤æ‰§è¡Œ
     parameter
         VACANT = 3'd0,
         WAIT_CONV2 = 3'd1,
@@ -46,7 +46,7 @@ module Relu3(
         end
     end
 
-    // µ±µÚ¶ş²ã¾í»ı²ãĞ´Íêºó£¬ÉèÖÃ¶ÁÊ¹ÄÜ
+    // å½“ç¬¬äºŒå±‚å·ç§¯å±‚å†™å®Œåï¼Œè®¾ç½®è¯»ä½¿èƒ½
     always @(posedge clk) begin
         if(!rst) begin
             rd_en <= 1'b0;
@@ -82,7 +82,7 @@ module Relu3(
         end
     end
 
-    // ÉèÖÃ¶ÁµØÖ·ÒÔ¼°¼ÆËã×î´ó³Ø»¯
+    // è®¾ç½®è¯»åœ°å€ä»¥åŠè®¡ç®—æœ€å¤§æ± åŒ–
     parameter pool_stride = 2'd2;
     parameter  input_raw = 6'd24;
     parameter 
@@ -90,16 +90,16 @@ module Relu3(
         POOL_TWO = 3'd1,
         POOL_THREE = 3'd2,
         POOL_FOUR = 3'd3;
-    // ³Ø»¯¾í»ıºË´óĞ¡
+    // æ± åŒ–å·ç§¯æ ¸å¤§å°
     parameter pool_size = 3'd4;
     reg [2:0] pool_count = POOL_TWO;
-    // ³Ø»¯ÇøÓòµÄÊ×µØÖ·
+    // æ± åŒ–åŒºåŸŸçš„é¦–åœ°å€
     reg [6:0] head_addr = 7'd0;
     parameter input_raw_div = 4'd12;
-    // ³Ø»¯ÇøÓòÊ×µØÖ·ÔÚÒ»ĞĞÖĞµÄ¸Ä±ä´ÎÊı
+    // æ± åŒ–åŒºåŸŸé¦–åœ°å€åœ¨ä¸€è¡Œä¸­çš„æ”¹å˜æ¬¡æ•°
     reg [3:0] head_addr_jump_count = 4'd0;
     parameter input_line_div = 4'd12;
-    // ³Ø»¯ÇøÓòÊ×µØÖ·¸Ä±äµÄĞĞÊı
+    // æ± åŒ–åŒºåŸŸé¦–åœ°å€æ”¹å˜çš„è¡Œæ•°
     reg [3:0] line_count = 4'd0;
     always @(posedge clk) begin
         if(!rst) begin
@@ -125,7 +125,7 @@ module Relu3(
                 WAIT_CONV2: begin
                     if(conv_2_ready) begin
                         pool_count <= pool_count < pool_size - 1? pool_count + 3'd1:POOL_ONE;
-                        // ¸ù¾İ³Ø»¯¾í»ıºË´óĞ¡ºÍÊäÈëÍ¼ÏñÀ´¼ÆËã¶ÁramµØÖ·
+                        // æ ¹æ®æ± åŒ–å·ç§¯æ ¸å¤§å°å’Œè¾“å…¥å›¾åƒæ¥è®¡ç®—è¯»ramåœ°å€
                         case(pool_count)
                             POOL_ONE: begin
                                 layer_3_read_addr <= head_addr;
@@ -166,10 +166,13 @@ module Relu3(
                             end
                         endcase
                     end
+                    else begin
+                        relu_3_ready <= 1'b0;
+                    end
                 end
                 GO_ON: begin
                     pool_count <= pool_count < pool_size - 1? pool_count + 3'd1:POOL_ONE;
-                    // ¸ù¾İ³Ø»¯¾í»ıºË´óĞ¡ºÍÊäÈëÍ¼ÏñÀ´¼ÆËã¶ÁramµØÖ·
+                    // æ ¹æ®æ± åŒ–å·ç§¯æ ¸å¤§å°å’Œè¾“å…¥å›¾åƒæ¥è®¡ç®—è¯»ramåœ°å€
                     case(pool_count)
                         POOL_ONE: begin
                             layer_3_read_addr <= head_addr;
@@ -223,7 +226,7 @@ module Relu3(
         end
     end
 
-    // ÅĞ¶Ï³Ø»¯²ãÊÇ·ñÍê³É£¬Íê³Éºó·µ»ØÉÏÉıÑØ
+    // åˆ¤æ–­æ± åŒ–å±‚æ˜¯å¦å®Œæˆï¼Œå®Œæˆåè¿”å›ä¸Šå‡æ²¿
     assign relu_3_complete = line_count == input_line_div;
 
 endmodule

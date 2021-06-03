@@ -16,7 +16,7 @@ module Mult8(
                 d_out <= d_in_a * d_in_b;
             end
             else begin
-                d_out <= 16'd0;
+                d_out <= d_out;
             end
         end
     end

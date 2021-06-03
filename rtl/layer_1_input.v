@@ -6,7 +6,7 @@ module Layer1Input(
     output layer_1_input_ready
 );
 
-    // ÄÚÖÃ×´Ì¬»ú£¬È·±£³ÌÐò¿ÉÖØ¸´Ö´ÐÐ£¬conv_1_readyÐÅºÅÖÃ1Ê±±íÃ÷µÚÒ»²ã¾í»ýÊä³öÓÐÐ§
+    // å†…ç½®çŠ¶æ€æœºï¼Œç¡®ä¿ç¨‹åºå¯é‡å¤æ‰§è¡Œï¼Œconv_1_readyä¿¡å·ç½®1æ—¶è¡¨æ˜Žç¬¬ä¸€å±‚å·ç§¯è¾“å‡ºæœ‰æ•ˆ
     reg layer_1_input_complete = 1'b0;
     parameter 
         VACANT = 3'd0,
@@ -35,7 +35,7 @@ module Layer1Input(
         end
     end
 
-    // ÊäÈëÍ¼Ïñ´óÐ¡Îª26x26x8£¬¾í»ýºË´óÐ¡Îª3x3x8
+    // è¾“å…¥å›¾åƒå¤§å°ä¸º26x26x8ï¼Œå·ç§¯æ ¸å¤§å°ä¸º3x3x8
     parameter img_size = 10'd676;
     parameter convolution_size = 7'd78;
     parameter kernel_size = 2'd3;
@@ -70,7 +70,7 @@ module Layer1Input(
         end
     end
 
-    // ¿¼ÂÇµ½conv_2.vÖÐ¶Ôlayer_1_input_readyÐÅºÅÔÚ×´Ì¬»úÖÐÏàµ±ÓÚ´òÁËÒ»ÅÄ£¬ÕâÀï¼õÈ¥1'b1
+    // è€ƒè™‘åˆ°conv_2.vä¸­å¯¹layer_1_input_readyä¿¡å·åœ¨çŠ¶æ€æœºä¸­ç›¸å½“äºŽæ‰“äº†ä¸€æ‹ï¼Œè¿™é‡Œå‡åŽ»1'b1
     assign layer_1_input_ready = pix_count >= convolution_size + kernel_size - 1'b1;
 
 endmodule
