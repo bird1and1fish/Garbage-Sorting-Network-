@@ -133,8 +133,8 @@ module Conv4 # (
                 CONV_START: begin
                     if(relu_3_ready) begin
                         mult_data[2] <= shift_reg[0];
-                        mult_data[5] <= shift_reg[12];
-                        mult_data[8] <= shift_reg[24];
+                        mult_data[5] <= shift_reg[img_raw];
+                        mult_data[8] <= shift_reg[img_raw << 1];
                         for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                             mult_data[j] <= mult_data[j + 1];
                             mult_data[j + 3] <= mult_data[j + 3 + 1];
@@ -146,8 +146,8 @@ module Conv4 # (
                 WAIT_RELU3: begin
                     if(relu_3_ready) begin
                         mult_data[2] <= shift_reg[0];
-                        mult_data[5] <= shift_reg[12];
-                        mult_data[8] <= shift_reg[24];
+                        mult_data[5] <= shift_reg[img_raw];
+                        mult_data[8] <= shift_reg[img_raw << 1];
                         for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                             mult_data[j] <= mult_data[j + 1];
                             mult_data[j + 3] <= mult_data[j + 3 + 1];
@@ -158,8 +158,8 @@ module Conv4 # (
                 // 第一层卷积输出完毕，不需要等待relu_3_ready信号
                 GO_ON: begin
                     mult_data[2] <= shift_reg[0];
-                    mult_data[5] <= shift_reg[12];
-                    mult_data[8] <= shift_reg[24];
+                    mult_data[5] <= shift_reg[img_raw];
+                    mult_data[8] <= shift_reg[img_raw << 1];
                     for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                         mult_data[j] <= mult_data[j + 1];
                         mult_data[j + 3] <= mult_data[j + 3 + 1];

@@ -1,7 +1,8 @@
 module GarbageSortTop # (
     parameter CONV1_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv1.hex",
     parameter CONV2_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv2.hex",
-    parameter CONV4_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv4.hex"
+    parameter CONV4_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv4.hex",
+    parameter CONV5_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv5.hex"
 ) (
     input clk,
     input rst,
@@ -52,6 +53,33 @@ module GarbageSortTop # (
     wire conv_4_ready;
     // 第4层卷积计算完成信号
     wire conv_4_complete;
+    // 第5层卷积开始信号
+    wire layer_4_input_ready;
+    // 第5层卷积输出
+    wire [7:0] layer_5_conv_tmp [63:0];
+    // 第5层卷积写地址
+    wire [6:0] conv_5_ram_write_addr;
+    // 第5层卷积输出有效信号
+    wire conv_5_ready;
+    // 第5层卷积计算完成信号
+    wire conv_5_complete;
+    // 第5层卷积ram输出
+    wire [7:0] layer_5_conv [63:0];
+    // 第5层卷积ram写完成信号
+    wire conv_5_write_complete;
+    // 第6层池化读使能信号
+    wire layer_6_read_en;
+    // 第6层池化读地址
+    wire [6:0] layer_6_read_addr;
+    // 第6层池化开始信号
+    wire layer_6_relu_begin;
+    // 第6层池化输出
+    wire [511:0] layer_6_max_tmp;
+    // 第6层池化输出有效信号
+    wire relu_6_ready;
+    // 第6层池化完成信号
+    wire relu_6_complete;
+    
 
     // 用于确定第1层卷积什么时候开始
     ImageInput ImageInput(.clk(clk), .rst(rst), .conv_start(conv_start), .image_input_ready(image_input_ready));
@@ -128,6 +156,42 @@ module GarbageSortTop # (
             else begin
                 Conv4 #(CONV4_HEX_FILE_PATH) Conv4(.clk(clk), .rst(rst), .d_in(layer_3_max_tmp), .conv_start(conv_start), .layer_3_input_ready(layer_3_input_ready),
                     .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete), .d_out(layer_4_conv_tmp[8 * (k + 1) - 1:8 * k]));
+            end
+        end
+    endgenerate
+
+    // 用于确定第5层卷积什么时候开始
+    Layer4Input Layer4Input(.clk(clk), .rst(rst), .conv_start(conv_start), .conv_4_ready(conv_4_ready),
+        .layer_4_input_ready(layer_4_input_ready));
+
+    // 第5层卷积
+    genvar m;
+    generate
+        for(m = 0; m < 64; m = m + 1)
+        begin: g3
+            // 减少信号线
+            if(m == 0) begin
+                // 第5层卷积
+                Conv5 #(CONV5_HEX_FILE_PATH) Conv5(.clk(clk), .rst(rst), .d_in(layer_4_conv_tmp), .conv_start(conv_start), .layer_4_input_ready(layer_4_input_ready),
+                    .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete), .d_out(layer_5_conv_tmp[m]),
+                    .ram_write_addr(conv_5_ram_write_addr), .conv_5_ready(conv_5_ready), .conv_5_complete(conv_5_complete));
+                // 第5层卷积缓存
+                Layer5Input Layer5Input(.clk(clk), .rst(rst), .d_in(layer_5_conv_tmp[m]), .conv_start(conv_start), .wr_en(conv_5_ready),
+                    .rd_en(layer_6_read_en), .wr_addr(conv_5_ram_write_addr), .rd_addr(layer_6_read_addr), .d_out(layer_5_conv[m]),
+                    .conv_5_write_complete(conv_5_write_complete), .layer_6_relu_begin(layer_6_relu_begin));
+                // 第6层池化
+                Relu6 Relu6(.clk(clk), .rst(rst), .layer_6_relu_begin(layer_6_relu_begin), .d_in(layer_5_conv[m]), .conv_5_ready(conv_5_ready),
+                    .conv_5_write_complete(conv_5_write_complete), .d_out(layer_6_max_tmp[8 * (m + 1) - 1:8 * m]), .rd_en(layer_6_read_en),
+                    .layer_6_read_addr(layer_6_read_addr), .relu_6_ready(relu_6_ready), .relu_6_complete(relu_6_complete));
+            end
+            else begin
+                Conv5 #(CONV5_HEX_FILE_PATH) Conv5(.clk(clk), .rst(rst), .d_in(layer_4_conv_tmp), .conv_start(conv_start), .layer_4_input_ready(layer_4_input_ready),
+                    .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete), .d_out(layer_5_conv_tmp[m]));
+                Layer5Input Layer5Input(.clk(clk), .rst(rst), .d_in(layer_5_conv_tmp[m]), .conv_start(conv_start), .wr_en(conv_5_ready),
+                    .rd_en(layer_6_read_en), .wr_addr(conv_5_ram_write_addr), .rd_addr(layer_6_read_addr),
+                    .d_out(layer_5_conv[m]));
+                Relu6 Relu6(.clk(clk), .rst(rst), .layer_6_relu_begin(layer_6_relu_begin), .d_in(layer_5_conv[m]), .conv_5_ready(conv_5_ready),
+                    .conv_5_write_complete(conv_5_write_complete), .d_out(layer_6_max_tmp[8 * (m + 1) - 1:8 * m]));
             end
         end
     endgenerate

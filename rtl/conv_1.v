@@ -99,8 +99,8 @@ module Conv1 # (
                 end
                 BUSY: begin
                     mult_data[2] <= shift_reg[0];
-                    mult_data[5] <= shift_reg[28];
-                    mult_data[8] <= shift_reg[56];
+                    mult_data[5] <= shift_reg[img_raw];
+                    mult_data[8] <= shift_reg[img_raw << 1];
                     for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                         mult_data[j] <= mult_data[j + 1];
                         mult_data[j + 3] <= mult_data[j + 3 + 1];

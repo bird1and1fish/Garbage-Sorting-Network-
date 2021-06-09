@@ -134,8 +134,8 @@ module Conv2 # (
                 CONV_START: begin
                     if(conv_1_ready) begin
                         mult_data[2] <= shift_reg[0];
-                        mult_data[5] <= shift_reg[26];
-                        mult_data[8] <= shift_reg[52];
+                        mult_data[5] <= shift_reg[img_raw];
+                        mult_data[8] <= shift_reg[img_raw << 1];
                         for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                             mult_data[j] <= mult_data[j + 1];
                             mult_data[j + 3] <= mult_data[j + 3 + 1];
@@ -147,8 +147,8 @@ module Conv2 # (
                 WAIT_CONV1: begin
                     if(conv_1_ready) begin
                         mult_data[2] <= shift_reg[0];
-                        mult_data[5] <= shift_reg[26];
-                        mult_data[8] <= shift_reg[52];
+                        mult_data[5] <= shift_reg[img_raw];
+                        mult_data[8] <= shift_reg[img_raw << 1];
                         for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                             mult_data[j] <= mult_data[j + 1];
                             mult_data[j + 3] <= mult_data[j + 3 + 1];
@@ -159,8 +159,8 @@ module Conv2 # (
                 // 第一层卷积输出完毕，不需要等待conv_1_ready信号
                 GO_ON: begin
                     mult_data[2] <= shift_reg[0];
-                    mult_data[5] <= shift_reg[26];
-                    mult_data[8] <= shift_reg[52];
+                    mult_data[5] <= shift_reg[img_raw];
+                    mult_data[8] <= shift_reg[img_raw << 1];
                     for(j = 4'd0; j < kernel_size - 1; j = j + 4'd1) begin
                         mult_data[j] <= mult_data[j + 1];
                         mult_data[j + 3] <= mult_data[j + 3 + 1];
