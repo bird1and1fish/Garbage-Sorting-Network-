@@ -1,5 +1,5 @@
-module Conv3 # (
-    parameter CONV3_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv3.hex"
+module Conv4 # (
+    parameter Conv4_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/Conv4.hex"
 ) (
     input clk,
     input rst,
@@ -112,7 +112,7 @@ module Conv3 # (
     // 从ram中读取3x3x16大小卷积核
     reg [127:0] k3 [0:kernel_count - 1];
     initial begin
-        (*rom_style = "block"*) $readmemh(CONV3_HEX_FILE_PATH, k3);
+        (*rom_style = "block"*) $readmemh(Conv4_HEX_FILE_PATH, k3);
     end
 
     // 读取3x3x8卷积数据
@@ -549,8 +549,6 @@ module Conv3 # (
     end
 
     // 判断输出有效，image_input_ready第7拍后d_out数据有效
-    ///////////////////////////
-    ///////////////////////////
     parameter out_ready = 3'd7;
     parameter out_end = 10'd150;// 12 x 12 + 7 - 1
     reg [9:0] out_count = 10'd0;
@@ -599,42 +597,4 @@ module Conv3 # (
 
     assign conv_4_complete = line_count == img_line - kernel_size + 1'b1;
 
-    // 设置写地址，乒乓缓存大小为4x24
-    parameter pingpong_size = 7'd96;
-    always @(posedge clk) begin
-        if(!rst) begin
-            ram_write_addr <= 7'd0;
-        end
-        else begin
-            case(state)
-                WAIT_RELU3: begin
-                    if(calculate_begin) begin
-                        if(conv_4_ready) begin
-                            if(ram_write_addr < pingpong_size - 1) begin
-                                ram_write_addr <= ram_write_addr + 7'd1;
-                            end
-                            else begin
-                                ram_write_addr <= 7'd0;
-                            end
-                        end
-                    end
-                end
-                GO_ON: begin
-                    if(calculate_begin) begin
-                        if(conv_4_ready) begin
-                            if(ram_write_addr < pingpong_size - 1) begin
-                                ram_write_addr <= ram_write_addr + 7'd1;
-                            end
-                            else begin
-                                ram_write_addr <= 7'd0;
-                            end
-                        end
-                    end
-                end
-                default: begin
-                    ram_write_addr <= 7'd0;
-                end
-            endcase
-        end
-    end
 endmodule

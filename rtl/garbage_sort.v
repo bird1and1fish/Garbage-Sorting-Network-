@@ -1,6 +1,7 @@
 module GarbageSortTop # (
     parameter CONV1_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv1.hex",
-    parameter CONV2_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv2.hex"
+    parameter CONV2_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv2.hex",
+    parameter CONV4_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv4.hex"
 ) (
     input clk,
     input rst,
@@ -43,6 +44,14 @@ module GarbageSortTop # (
     wire relu_3_ready;
     // 第3层池化完成信号
     wire relu_3_complete;
+    // 第4层卷积开始信号
+    wire layer_3_input_ready;
+    // 第4层卷积输出
+    wire [255:0] layer_4_conv_tmp;
+    // 第4层卷积输出有效信号
+    wire conv_4_ready;
+    // 第4层卷积计算完成信号
+    wire conv_4_complete;
 
     // 用于确定第1层卷积什么时候开始
     ImageInput ImageInput(.clk(clk), .rst(rst), .conv_start(conv_start), .image_input_ready(image_input_ready));
@@ -96,6 +105,29 @@ module GarbageSortTop # (
                     .d_out(layer_2_conv[i]));
                 Relu3 Relu3(.clk(clk), .rst(rst), .layer_3_relu_begin(layer_3_relu_begin), .d_in(layer_2_conv[i]), .conv_2_ready(conv_2_ready),
                     .conv_2_write_complete(conv_2_write_complete), .d_out(layer_3_max_tmp[8 * (i + 1) - 1:8 * i]));
+            end
+        end
+    endgenerate
+
+    // 用于确定第4层卷积什么时候开始
+    Layer3Input Layer3Input(.clk(clk), .rst(rst), .conv_start(conv_start), .relu_3_ready(relu_3_ready),
+        .layer_3_input_ready(layer_3_input_ready));
+
+    // 第4层卷积
+    genvar k;
+    generate
+        for(k = 0; k < 32; k = k + 1)
+        begin: g2
+            // 减少信号线
+            if(k == 0) begin
+                // 第4层卷积
+                Conv4 #(CONV4_HEX_FILE_PATH) Conv4(.clk(clk), .rst(rst), .d_in(layer_3_max_tmp), .conv_start(conv_start), .layer_3_input_ready(layer_3_input_ready),
+                    .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete), .d_out(layer_4_conv_tmp[8 * (k + 1) - 1:8 * k]),
+                    .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete));
+            end
+            else begin
+                Conv4 #(CONV4_HEX_FILE_PATH) Conv4(.clk(clk), .rst(rst), .d_in(layer_3_max_tmp), .conv_start(conv_start), .layer_3_input_ready(layer_3_input_ready),
+                    .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete), .d_out(layer_4_conv_tmp[8 * (k + 1) - 1:8 * k]));
             end
         end
     endgenerate
