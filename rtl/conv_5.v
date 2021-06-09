@@ -1,5 +1,5 @@
 module Conv5 # (
-    parameter Conv5_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/Conv5.hex"
+    parameter CONV5_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv5.hex"
 ) (
     input clk,
     input rst,
@@ -113,7 +113,7 @@ module Conv5 # (
     // 从ram中读取3x3x32大小卷积核
     reg [255:0] k4 [0:kernel_count - 1];
     initial begin
-        (*rom_style = "block"*) $readmemh(Conv5_HEX_FILE_PATH, k4);
+        (*rom_style = "block"*) $readmemh(CONV5_HEX_FILE_PATH, k4);
     end
 
     // 读取3x3x32卷积数据

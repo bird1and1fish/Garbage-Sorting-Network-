@@ -8,6 +8,7 @@ module Relu6(
     output reg [7:0] d_out,
     output reg rd_en = 1'b0,
     output reg [6:0] layer_6_read_addr = 7'd0,
+    output reg [6:0] ram_write_addr = 7'd0,
     output reg relu_6_ready = 1'b0,
     output relu_6_complete
 );
@@ -231,5 +232,40 @@ module Relu6(
 
     // 判断池化层是否完成，完成后返回上升沿
     assign relu_6_complete = line_count == input_line_div;
+
+    // 设置写地址，内存大小为4x4=16
+    parameter ram_size = 7'd16;
+    always @(posedge clk) begin
+        if(!rst) begin
+            ram_write_addr <= 7'd0;
+        end
+        else begin
+            case(state)
+                WAIT_CONV5: begin
+                    if(relu_6_ready) begin
+                        if(ram_write_addr < ram_size - 1) begin
+                            ram_write_addr <= ram_write_addr + 7'd1;
+                        end
+                        else begin
+                            ram_write_addr <= 7'd0;
+                        end
+                    end
+                end
+                GO_ON: begin
+                    if(relu_6_ready) begin
+                        if(ram_write_addr < ram_size - 1) begin
+                            ram_write_addr <= ram_write_addr + 7'd1;
+                        end
+                        else begin
+                            ram_write_addr <= 7'd0;
+                        end
+                    end
+                end
+                default: begin
+                    ram_write_addr <= 7'd0;
+                end
+            endcase
+        end
+    end
 
 endmodule

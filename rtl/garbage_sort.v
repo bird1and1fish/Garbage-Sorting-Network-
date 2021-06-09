@@ -2,7 +2,8 @@ module GarbageSortTop # (
     parameter CONV1_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv1.hex",
     parameter CONV2_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv2.hex",
     parameter CONV4_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv4.hex",
-    parameter CONV5_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv5.hex"
+    parameter CONV5_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv5.hex",
+    parameter FULLCONNECT7_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/fullconnect7.hex"
 ) (
     input clk,
     input rst,
@@ -79,6 +80,22 @@ module GarbageSortTop # (
     wire relu_6_ready;
     // 第6层池化完成信号
     wire relu_6_complete;
+    // 第6层写ram地址
+    wire [6:0] relu_6_ram_write_addr;
+    // 第6层池化ram输出
+    wire [511:0] layer_6_max;
+    // 第6层池化ram写完成信号
+    wire relu_6_write_complete;
+    // 第7层读使能信号
+    wire layer_7_read_en;
+    // 第7层读地址
+    wire [6:0] layer_7_read_addr;
+    // 第7层输出
+    wire [7:0] layer_7_out;
+    // 第7层输出有效信号
+    wire full_connect_7_ready;
+    // 第7层输出完成信号
+    wire full_connect_7_complete;
     
 
     // 用于确定第1层卷积什么时候开始
@@ -182,7 +199,7 @@ module GarbageSortTop # (
                 // 第6层池化
                 Relu6 Relu6(.clk(clk), .rst(rst), .layer_6_relu_begin(layer_6_relu_begin), .d_in(layer_5_conv[m]), .conv_5_ready(conv_5_ready),
                     .conv_5_write_complete(conv_5_write_complete), .d_out(layer_6_max_tmp[8 * (m + 1) - 1:8 * m]), .rd_en(layer_6_read_en),
-                    .layer_6_read_addr(layer_6_read_addr), .relu_6_ready(relu_6_ready), .relu_6_complete(relu_6_complete));
+                    .layer_6_read_addr(layer_6_read_addr), .ram_write_addr(relu_6_ram_write_addr), .relu_6_ready(relu_6_ready), .relu_6_complete(relu_6_complete));
             end
             else begin
                 Conv5 #(CONV5_HEX_FILE_PATH) Conv5(.clk(clk), .rst(rst), .d_in(layer_4_conv_tmp), .conv_start(conv_start), .layer_4_input_ready(layer_4_input_ready),
@@ -195,6 +212,16 @@ module GarbageSortTop # (
             end
         end
     endgenerate
+
+    // 第6层池化缓存
+    Layer6Input Layer6Input(.clk(clk), .rst(rst), .d_in(layer_6_max_tmp), .conv_start(conv_start), .wr_en(relu_6_ready),
+            .rd_en(layer_7_read_en), .wr_addr(relu_6_ram_write_addr), .rd_addr(layer_7_read_addr), .d_out(layer_6_max),
+            .relu_6_write_complete(relu_6_write_complete));
+    
+    // 第7层全连接
+    FullConnect7 #(FULLCONNECT7_HEX_FILE_PATH) FullConnect7(.clk(clk), .rst(rst), .d_in(layer_6_max), .conv_start(conv_start), .relu_6_write_complete(relu_6_write_complete),
+            .d_out(layer_7_out), .rd_en(layer_7_read_en), .layer_7_read_addr(layer_7_read_addr), .full_connect_7_ready(full_connect_7_ready),
+            .full_connect_7_complete(full_connect_7_complete));
 
     always @(posedge clk) begin
         if(!rst) begin
