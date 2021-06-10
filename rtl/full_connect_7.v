@@ -54,16 +54,16 @@ module FullConnect7 # (
         end
     end
 
-    // 从ram中读取3x3x64x10大小卷积核
-    parameter kernel_count = 4'd9;
-    reg [511:0] k5 [0:10 * kernel_count - 1];
+    // 从ram中读取4x4x64x10大小卷积核
+    parameter ram_size = 5'd16;
+    reg [511:0] k5 [0:10 * ram_size - 1];
     initial begin
         (*rom_style = "block"*) $readmemh(FULLCONNECT7_HEX_FILE_PATH, k5);
     end
 
     // 开始计算卷积
     parameter layer_num = 4'd10;
-    parameter ram_size = 5'd16;
+    
     reg [9:0] add_count = 10'd0;
     reg [3:0] layer_count = 4'd0;
     reg [17:0] sum = 18'd0;
