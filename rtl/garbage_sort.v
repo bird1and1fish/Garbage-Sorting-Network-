@@ -10,7 +10,7 @@ module GarbageSortTop # (
     input [23:0] d_in,
     input conv_start,
     output [9:0] read_addr,
-    output reg [7:0] net_out,
+    output [7:0] net_out,
     output net_complete
 );
 
@@ -226,18 +226,8 @@ module GarbageSortTop # (
             .d_out(layer_7_out), .rd_en(layer_7_read_en), .layer_7_read_addr(layer_7_read_addr), .full_connect_7_ready(full_connect_7_ready),
             .full_connect_7_complete(full_connect_7_complete));
 
-    always @(posedge clk) begin
-        if(!rst) begin
-            net_out <= 8'd0;
-        end
-        else begin
-            if(full_connect_7_ready) begin
-                net_out <= layer_7_out;
-            end
-            else begin
-                net_out <= 8'd0;
-            end
-        end
-    end
+    // 输出类别
+    NetOut NetOut(.clk(clk), .rst(rst), .conv_start(conv_start), .layer_7_out(layer_7_out), .full_connect_7_ready(full_connect_7_ready),
+            .full_connect_7_complete(full_connect_7_complete), .net_out(net_out));
 
 endmodule
