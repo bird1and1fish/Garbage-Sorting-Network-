@@ -9,7 +9,9 @@ module GarbageSortTop # (
     input rst,
     input [23:0] d_in,
     input conv_start,
-    output reg [7:0] net_out
+    output [9:0] read_addr,
+    output reg [7:0] net_out,
+    output net_complete
 );
 
     // 第1层卷积使能信号
@@ -97,6 +99,7 @@ module GarbageSortTop # (
     // 第7层输出完成信号
     wire full_connect_7_complete;
     
+    assign net_complete = full_connect_7_complete;
 
     // 用于确定第1层卷积什么时候开始
     ImageInput ImageInput(.clk(clk), .rst(rst), .conv_start(conv_start), .image_input_ready(image_input_ready));
@@ -109,11 +112,11 @@ module GarbageSortTop # (
             // 减少信号线
             if(j == 0) begin
                 Conv1 #(CONV1_HEX_FILE_PATH[536 * (j + 1) - 1:536 * j]) Conv1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
-                    .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]), .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete));
+                    .read_addr(read_addr), .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]), .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete));
             end
             else begin
                 Conv1 #(CONV1_HEX_FILE_PATH[536 * (j + 1) - 1:536 * j]) Conv1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
-                    .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]));
+                    .read_addr(read_addr), .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]));
             end
         end
     endgenerate
@@ -228,7 +231,7 @@ module GarbageSortTop # (
             net_out <= 8'd0;
         end
         else begin
-            if(full_connect_7_complete) begin
+            if(full_connect_7_ready) begin
                 net_out <= layer_7_out;
             end
             else begin

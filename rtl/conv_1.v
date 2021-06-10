@@ -6,6 +6,7 @@ module Conv1 # (
     input [23:0] d_in,
     input conv_start,
     input image_input_ready,
+    output reg [9:0] read_addr = 10'd0,
     output reg [7:0] d_out,
     output conv_1_ready,
     output conv_1_complete
@@ -40,6 +41,29 @@ module Conv1 # (
     end
 
     wire calculate_begin = image_input_ready && state == BUSY;
+
+    // 设置读ram地址
+    parameter addr_max = 10'd783;// 28 x 28 - 1 = 783
+    always @(posedge clk) begin
+        if(!rst) begin
+            read_addr <= 10'd0;
+        end
+        else begin
+            case(state)
+                VACANT: begin
+                    read_addr <= 10'd0;
+                end
+                BUSY: begin
+                    if(read_addr < addr_max) begin
+                        read_addr <= read_addr + 10'd1;
+                    end
+                end
+                default: begin
+                    read_addr <= 10'd0;
+                end
+            endcase
+        end
+    end
 
     // 输入图像大小为28x28x3，卷积核大小为3x3x3x8
     parameter img_raw = 5'd28;

@@ -6,13 +6,17 @@ module test();
     reg conv_start = 1'b1;
     reg [9:0] count = 10'd0;
     wire [7:0] out;
+    wire [9:0] read_addr;
+    wire net_complete;
 
     GarbageSortTop GarbageSortTop(
         .clk(clk),
         .rst(rst),
         .d_in(data),
         .conv_start(conv_start),
-        .net_out(out)
+        .read_addr(read_addr),
+        .net_out(out),
+        .net_complete(net_complete)
     );
 
     initial begin
