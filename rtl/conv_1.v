@@ -1,5 +1,5 @@
 module Conv1 # (
-    parameter CONV1_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv1.hex"
+    parameter CONV1_HEX_FILE_PATH = "D:/Quartus/ConvolutionNet/Garbage-Sorting-Network-/data/conv1_1.hex"
 ) (
     input clk,
     input rst,
