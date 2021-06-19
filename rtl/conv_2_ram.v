@@ -27,9 +27,6 @@ module Conv2Ram(
             if(rd_en) begin
                 d_out <= layer_2_bram[rd_addr];
             end
-            else begin
-                d_out <= 8'b0;
-            end
         end
     end
 

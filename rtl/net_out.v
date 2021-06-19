@@ -74,6 +74,7 @@ module NetOut(
         end
     end
 
+    // 输出垃圾的类别
     assign net_out = class_count == class_num? max_index + 8'd1:8'd0;
 
 endmodule

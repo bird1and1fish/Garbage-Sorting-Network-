@@ -6,10 +6,12 @@ module ImageInput(
 );
 
     // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
+    // 增加WAIT_MEMORY状态是因为从memory中读取需要打一拍
     reg image_input_complete = 1'b0;
     parameter 
         VACANT = 3'd0,
-        BUSY = 3'd1;
+        WAIT_MEMORY = 3'd1,
+        BUSY = 3'd2;
     reg [2:0] state = 3'd0;
     always @(posedge clk) begin
         if(!rst) begin
@@ -19,8 +21,11 @@ module ImageInput(
             case(state)
                 VACANT: begin
                     if(conv_start) begin
-                        state <= BUSY;
+                        state <= WAIT_MEMORY;
                     end
+                end
+                WAIT_MEMORY: begin
+                    state <= BUSY;
                 end
                 BUSY: begin
                     if(image_input_complete) begin
