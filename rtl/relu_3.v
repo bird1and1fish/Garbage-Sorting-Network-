@@ -9,7 +9,7 @@ module Relu3(
     output reg rd_en = 1'b0,
     output reg [6:0] layer_3_read_addr = 7'd0,
     output reg relu_3_ready = 1'b0,
-    output relu_3_complete
+    output reg relu_3_complete = 1'b0
 );
 
     // 内置状态机，确保程序可重复执行
@@ -71,17 +71,6 @@ module Relu3(
                     rd_en <= 1'b0;
                 end
             endcase
-            // if(layer_3_relu_begin) begin
-            //     if(!relu_3_complete) begin
-            //         rd_en <= 1'b1;
-            //     end
-            //     else begin
-            //         rd_en <= 1'b0;
-            //     end
-            // end
-            // else begin
-            //     rd_en <= 1'b0;
-            // end
         end
     end
 
@@ -255,6 +244,15 @@ module Relu3(
     end
 
     // 判断池化层是否完成，完成后返回上升沿
-    assign relu_3_complete = line_count == input_line_div;
+    wire relu_3_complete_ = line_count == input_line_div;
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            relu_3_complete <= 1'b0;
+        end
+        else begin
+            relu_3_complete <= relu_3_complete_;
+        end
+    end
 
 endmodule

@@ -14,10 +14,12 @@ module FullConnect7 # (
 );
 
     // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
+    // 设置WAIT_RAM状态是因为从设置addr到d_in需要等一拍
     parameter 
         VACANT = 3'd0,
         WAIT_LAYER6 = 3'd1,
-        BUSY = 3'd2;
+        WAIT_RAM = 3'd2,
+        BUSY = 3'd3;
     reg [2:0] state = 3'd0;
     always @(posedge clk) begin
         if(!rst) begin
@@ -35,9 +37,12 @@ module FullConnect7 # (
                 WAIT_LAYER6: begin
                     rd_en <= 1'b0;
                     if(relu_6_write_complete) begin
-                        state <= BUSY;
+                        state <= WAIT_RAM;
                         rd_en <= 1'b1;
                     end
+                end
+                WAIT_RAM: begin
+                    state <= BUSY;
                 end
                 BUSY: begin
                     rd_en <= 1'b1;
@@ -66,10 +71,10 @@ module FullConnect7 # (
     
     reg [9:0] add_count = 10'd0;
     reg [3:0] layer_count = 4'd0;
-    reg [17:0] sum = 18'd0;
+    reg [26:0] sum = 27'd0;
     always @(posedge clk) begin
         if(!rst) begin
-            sum <= 18'd0;
+            sum <= 27'd0;
             add_count <= 10'd0;
             layer_count <= 4'd0;
             layer_7_read_addr <= 7'd0;
@@ -78,18 +83,21 @@ module FullConnect7 # (
         else begin
             case(state)
                 VACANT: begin
-                    sum <= 18'd0;
+                    sum <= 27'd0;
                     add_count <= 10'd0;
                     layer_count <= 4'd0;
                     layer_7_read_addr <= 7'd0;
                     full_connect_7_ready <= 1'b0;
                 end
                 WAIT_LAYER6: begin
-                    sum <= 18'd0;
+                    sum <= 27'd0;
                     add_count <= 10'd0;
                     layer_count <= 4'd0;
                     layer_7_read_addr <= 7'd0;
                     full_connect_7_ready <= 1'b0;
+                end
+                WAIT_RAM: begin
+                    layer_7_read_addr <= layer_7_read_addr < (ram_size - 1'b1)? layer_7_read_addr + 7'd1:7'd0;
                 end
                 BUSY: begin
                     if(add_count < ram_size) begin
@@ -137,12 +145,12 @@ module FullConnect7 # (
                     else begin
                         add_count <= 7'd0;
                         full_connect_7_ready <= 1'b0;
-                        sum <= 18'd0;
+                        sum <= 27'd0;
                         layer_count <= layer_count + 4'd1;
                     end
                 end
                 default: begin
-                    sum <= 18'd0;
+                    sum <= 27'd0;
                     add_count <= 10'd0;
                     layer_count <= 4'd0;
                     layer_7_read_addr <= 7'd0;
@@ -152,7 +160,7 @@ module FullConnect7 # (
         end
     end
 
-    //assign d_out = sum[17:10];
+    //assign d_out = sum[26:19];
     assign d_out = sum[7:0];
 
     assign full_connect_7_complete = layer_count == layer_num;

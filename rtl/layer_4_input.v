@@ -71,6 +71,6 @@ module Layer4Input(
     end
 
     // 考虑到conv_5.v中对layer_4_input_ready信号在状态机中相当于打了一拍，这里减去1'b1
-    assign layer_4_input_ready = pix_count >= convolution_size + kernel_size - 1'b1;
+    assign layer_4_input_ready = pix_count >= convolution_size + kernel_size;
 
 endmodule

@@ -10,7 +10,7 @@ module Relu6(
     output reg [6:0] layer_6_read_addr = 7'd0,
     output reg [6:0] ram_write_addr = 7'd0,
     output reg relu_6_ready = 1'b0,
-    output relu_6_complete
+    output reg relu_6_complete = 1'b0
 );
 
     // 内置状态机，确保程序可重复执行
@@ -72,17 +72,6 @@ module Relu6(
                     rd_en <= 1'b0;
                 end
             endcase
-            // if(layer_6_relu_begin) begin
-            //     if(!relu_6_complete) begin
-            //         rd_en <= 1'b1;
-            //     end
-            //     else begin
-            //         rd_en <= 1'b0;
-            //     end
-            // end
-            // else begin
-            //     rd_en <= 1'b0;
-            // end
         end
     end
 
@@ -256,7 +245,16 @@ module Relu6(
     end
 
     // 判断池化层是否完成，完成后返回上升沿
-    assign relu_6_complete = line_count == input_line_div;
+    wire relu_6_complete_ = line_count == input_line_div;
+
+    always @(posedge clk) begin
+        if(!rst) begin
+            relu_6_complete <= 1'b0;
+        end
+        else begin
+            relu_6_complete <= relu_6_complete_;
+        end
+    end
 
     // 设置写地址，内存大小为4x4=16
     parameter ram_size = 7'd16;

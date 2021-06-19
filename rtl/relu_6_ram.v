@@ -27,9 +27,6 @@ module Relu6Ram(
             if(rd_en) begin
                 d_out <= layer_6_bram[rd_addr];
             end
-            else begin
-                d_out <= 512'b0;
-            end
         end
     end
 

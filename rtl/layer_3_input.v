@@ -71,6 +71,6 @@ module Layer3Input(
     end
 
     // 考虑到conv_4.v中对layer_3_input_ready信号在状态机中相当于打了一拍，这里减去1'b1
-    assign layer_3_input_ready = pix_count >= convolution_size + kernel_size - 1'b1;
+    assign layer_3_input_ready = pix_count >= convolution_size + kernel_size;
 
 endmodule
