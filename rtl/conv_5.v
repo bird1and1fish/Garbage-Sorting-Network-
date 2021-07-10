@@ -11,8 +11,14 @@ module Conv5 # (
     output reg [7:0] d_out,
     output reg [6:0] ram_write_addr = 7'd0,
     output conv_5_ready,
-    output conv_5_complete
+    output conv_5_complete,
+
+    input [7:0] qb
 );
+
+    parameter Zx = 8'd0;
+    parameter M = 8'd1;
+    parameter Za = 8'd0;
 
     // 内置状态机，确保程序可重复执行，conv_4_ready信号置1时表明信号有效
     // layer_4_input_ready信号置1时下一周期开始运算
@@ -181,69 +187,69 @@ module Conv5 # (
     generate
         for(k = 0; k < kernel_count; k = k + 1)
         begin: conv1_mult
-            Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k4[k][255:248]), .d_in_b(mult_data[k][255:248]),
+            Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k4[k][255:248]), .d_in_b(mult_data[k][255:248] - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
-            Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k4[k][247:240]), .d_in_b(mult_data[k][247:240]),
+            Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k4[k][247:240]), .d_in_b(mult_data[k][247:240] - Zx),
                 .start(calculate_begin), .d_out(mult[k + kernel_count]));
-            Mult8 Mult8_3(.clk(clk), .rst(rst), .d_in_a(k4[k][239:232]), .d_in_b(mult_data[k][239:232]),
+            Mult8 Mult8_3(.clk(clk), .rst(rst), .d_in_a(k4[k][239:232]), .d_in_b(mult_data[k][239:232] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 2 * kernel_count]));
-            Mult8 Mult8_4(.clk(clk), .rst(rst), .d_in_a(k4[k][231:224]), .d_in_b(mult_data[k][231:224]),
+            Mult8 Mult8_4(.clk(clk), .rst(rst), .d_in_a(k4[k][231:224]), .d_in_b(mult_data[k][231:224] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 3 * kernel_count]));
-            Mult8 Mult8_5(.clk(clk), .rst(rst), .d_in_a(k4[k][223:216]), .d_in_b(mult_data[k][223:216]),
+            Mult8 Mult8_5(.clk(clk), .rst(rst), .d_in_a(k4[k][223:216]), .d_in_b(mult_data[k][223:216] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 4 * kernel_count]));
-            Mult8 Mult8_6(.clk(clk), .rst(rst), .d_in_a(k4[k][215:208]), .d_in_b(mult_data[k][215:208]),
+            Mult8 Mult8_6(.clk(clk), .rst(rst), .d_in_a(k4[k][215:208]), .d_in_b(mult_data[k][215:208] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 5 * kernel_count]));
-            Mult8 Mult8_7(.clk(clk), .rst(rst), .d_in_a(k4[k][207:200]), .d_in_b(mult_data[k][207:200]),
+            Mult8 Mult8_7(.clk(clk), .rst(rst), .d_in_a(k4[k][207:200]), .d_in_b(mult_data[k][207:200] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 6 * kernel_count]));
-            Mult8 Mult8_8(.clk(clk), .rst(rst), .d_in_a(k4[k][199:192]), .d_in_b(mult_data[k][199:192]),
+            Mult8 Mult8_8(.clk(clk), .rst(rst), .d_in_a(k4[k][199:192]), .d_in_b(mult_data[k][199:192] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 7 * kernel_count]));
-            Mult8 Mult8_9(.clk(clk), .rst(rst), .d_in_a(k4[k][191:184]), .d_in_b(mult_data[k][191:184]),
+            Mult8 Mult8_9(.clk(clk), .rst(rst), .d_in_a(k4[k][191:184]), .d_in_b(mult_data[k][191:184] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 8 * kernel_count]));
-            Mult8 Mult8_10(.clk(clk), .rst(rst), .d_in_a(k4[k][183:176]), .d_in_b(mult_data[k][183:176]),
+            Mult8 Mult8_10(.clk(clk), .rst(rst), .d_in_a(k4[k][183:176]), .d_in_b(mult_data[k][183:176] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 9 * kernel_count]));
-            Mult8 Mult8_11(.clk(clk), .rst(rst), .d_in_a(k4[k][175:168]), .d_in_b(mult_data[k][175:168]),
+            Mult8 Mult8_11(.clk(clk), .rst(rst), .d_in_a(k4[k][175:168]), .d_in_b(mult_data[k][175:168] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 10 * kernel_count]));
-            Mult8 Mult8_12(.clk(clk), .rst(rst), .d_in_a(k4[k][167:160]), .d_in_b(mult_data[k][167:160]),
+            Mult8 Mult8_12(.clk(clk), .rst(rst), .d_in_a(k4[k][167:160]), .d_in_b(mult_data[k][167:160] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 11 * kernel_count]));
-            Mult8 Mult8_13(.clk(clk), .rst(rst), .d_in_a(k4[k][159:152]), .d_in_b(mult_data[k][159:152]),
+            Mult8 Mult8_13(.clk(clk), .rst(rst), .d_in_a(k4[k][159:152]), .d_in_b(mult_data[k][159:152] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 12 * kernel_count]));
-            Mult8 Mult8_14(.clk(clk), .rst(rst), .d_in_a(k4[k][151:144]), .d_in_b(mult_data[k][151:144]),
+            Mult8 Mult8_14(.clk(clk), .rst(rst), .d_in_a(k4[k][151:144]), .d_in_b(mult_data[k][151:144] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 13 * kernel_count]));
-            Mult8 Mult8_15(.clk(clk), .rst(rst), .d_in_a(k4[k][143:136]), .d_in_b(mult_data[k][143:136]),
+            Mult8 Mult8_15(.clk(clk), .rst(rst), .d_in_a(k4[k][143:136]), .d_in_b(mult_data[k][143:136] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 14 * kernel_count]));
-            Mult8 Mult8_16(.clk(clk), .rst(rst), .d_in_a(k4[k][135:128]), .d_in_b(mult_data[k][135:128]),
+            Mult8 Mult8_16(.clk(clk), .rst(rst), .d_in_a(k4[k][135:128]), .d_in_b(mult_data[k][135:128] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 15 * kernel_count]));
-            Mult8 Mult8_17(.clk(clk), .rst(rst), .d_in_a(k4[k][127:120]), .d_in_b(mult_data[k][127:120]),
+            Mult8 Mult8_17(.clk(clk), .rst(rst), .d_in_a(k4[k][127:120]), .d_in_b(mult_data[k][127:120] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 16 * kernel_count]));
-            Mult8 Mult8_18(.clk(clk), .rst(rst), .d_in_a(k4[k][119:112]), .d_in_b(mult_data[k][119:112]),
+            Mult8 Mult8_18(.clk(clk), .rst(rst), .d_in_a(k4[k][119:112]), .d_in_b(mult_data[k][119:112] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 17 * kernel_count]));
-            Mult8 Mult8_19(.clk(clk), .rst(rst), .d_in_a(k4[k][111:104]), .d_in_b(mult_data[k][111:104]),
+            Mult8 Mult8_19(.clk(clk), .rst(rst), .d_in_a(k4[k][111:104]), .d_in_b(mult_data[k][111:104] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 18 * kernel_count]));
-            Mult8 Mult8_20(.clk(clk), .rst(rst), .d_in_a(k4[k][103:96]), .d_in_b(mult_data[k][103:96]),
+            Mult8 Mult8_20(.clk(clk), .rst(rst), .d_in_a(k4[k][103:96]), .d_in_b(mult_data[k][103:96] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 19 * kernel_count]));
-            Mult8 Mult8_21(.clk(clk), .rst(rst), .d_in_a(k4[k][95:88]), .d_in_b(mult_data[k][95:88]),
+            Mult8 Mult8_21(.clk(clk), .rst(rst), .d_in_a(k4[k][95:88]), .d_in_b(mult_data[k][95:88] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 20 * kernel_count]));
-            Mult8 Mult8_22(.clk(clk), .rst(rst), .d_in_a(k4[k][87:80]), .d_in_b(mult_data[k][87:80]),
+            Mult8 Mult8_22(.clk(clk), .rst(rst), .d_in_a(k4[k][87:80]), .d_in_b(mult_data[k][87:80] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 21 * kernel_count]));
-            Mult8 Mult8_23(.clk(clk), .rst(rst), .d_in_a(k4[k][79:72]), .d_in_b(mult_data[k][79:72]),
+            Mult8 Mult8_23(.clk(clk), .rst(rst), .d_in_a(k4[k][79:72]), .d_in_b(mult_data[k][79:72] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 22 * kernel_count]));
-            Mult8 Mult8_24(.clk(clk), .rst(rst), .d_in_a(k4[k][71:64]), .d_in_b(mult_data[k][71:64]),
+            Mult8 Mult8_24(.clk(clk), .rst(rst), .d_in_a(k4[k][71:64]), .d_in_b(mult_data[k][71:64] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 23 * kernel_count]));
-            Mult8 Mult8_25(.clk(clk), .rst(rst), .d_in_a(k4[k][63:56]), .d_in_b(mult_data[k][63:56]),
+            Mult8 Mult8_25(.clk(clk), .rst(rst), .d_in_a(k4[k][63:56]), .d_in_b(mult_data[k][63:56] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 24 * kernel_count]));
-            Mult8 Mult8_26(.clk(clk), .rst(rst), .d_in_a(k4[k][55:48]), .d_in_b(mult_data[k][55:48]),
+            Mult8 Mult8_26(.clk(clk), .rst(rst), .d_in_a(k4[k][55:48]), .d_in_b(mult_data[k][55:48] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 25 * kernel_count]));
-            Mult8 Mult8_27(.clk(clk), .rst(rst), .d_in_a(k4[k][47:40]), .d_in_b(mult_data[k][47:40]),
+            Mult8 Mult8_27(.clk(clk), .rst(rst), .d_in_a(k4[k][47:40]), .d_in_b(mult_data[k][47:40] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 26 * kernel_count]));
-            Mult8 Mult8_28(.clk(clk), .rst(rst), .d_in_a(k4[k][39:32]), .d_in_b(mult_data[k][39:32]),
+            Mult8 Mult8_28(.clk(clk), .rst(rst), .d_in_a(k4[k][39:32]), .d_in_b(mult_data[k][39:32] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 27 * kernel_count]));
-            Mult8 Mult8_29(.clk(clk), .rst(rst), .d_in_a(k4[k][31:24]), .d_in_b(mult_data[k][31:24]),
+            Mult8 Mult8_29(.clk(clk), .rst(rst), .d_in_a(k4[k][31:24]), .d_in_b(mult_data[k][31:24] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 28 * kernel_count]));
-            Mult8 Mult8_30(.clk(clk), .rst(rst), .d_in_a(k4[k][23:16]), .d_in_b(mult_data[k][23:16]),
+            Mult8 Mult8_30(.clk(clk), .rst(rst), .d_in_a(k4[k][23:16]), .d_in_b(mult_data[k][23:16] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 29 * kernel_count]));
-            Mult8 Mult8_31(.clk(clk), .rst(rst), .d_in_a(k4[k][15:8]), .d_in_b(mult_data[k][15:8]),
+            Mult8 Mult8_31(.clk(clk), .rst(rst), .d_in_a(k4[k][15:8]), .d_in_b(mult_data[k][15:8] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 30 * kernel_count]));
-            Mult8 Mult8_32(.clk(clk), .rst(rst), .d_in_a(k4[k][7:0]), .d_in_b(mult_data[k][7:0]),
+            Mult8 Mult8_32(.clk(clk), .rst(rst), .d_in_a(k4[k][7:0]), .d_in_b(mult_data[k][7:0] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 31 * kernel_count]));
         end
     endgenerate
@@ -635,7 +641,7 @@ module Conv5 # (
                         //     d_out <= (adder_72 >> 17) + 8'd1;
                         // else
                         //     d_out <= adder_72 >> 17;
-                        d_out <= adder_145;
+                        d_out <= (((adder_145 + qb) * M) >> 0) + Za;
                     end
                 end
                 GO_ON: begin

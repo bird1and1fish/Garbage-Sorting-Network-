@@ -98,7 +98,13 @@ module GarbageSortTop # (
     wire full_connect_7_ready;
     // 第7层输出完成信号
     wire full_connect_7_complete;
-    
+
+    // 卷积参数qb
+    parameter [63:0] conv1_qb = 64'h00_00_00_00_00_00_00_00;
+    parameter [127:0] conv2_qb = 128'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00;
+    parameter [255:0] conv4_qb = 256'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00;
+    parameter [511:0] conv5_qb = 512'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00;
+
     assign net_complete = full_connect_7_complete;
 
     // 用于确定第1层卷积什么时候开始
@@ -112,11 +118,13 @@ module GarbageSortTop # (
             // 减少信号线
             if(j == 0) begin
                 Conv1 #(CONV1_HEX_FILE_PATH[536 * (j + 1) - 1:536 * j]) Conv1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
-                    .read_addr(read_addr), .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]), .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete));
+                    .read_addr(read_addr), .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]), .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete),
+                    .qb(conv1_qb[8 * (j + 1) - 1:8 * j]));
             end
             else begin
                 Conv1 #(CONV1_HEX_FILE_PATH[536 * (j + 1) - 1:536 * j]) Conv1(.clk(clk), .rst(rst), .d_in(d_in), .conv_start(conv_start), .image_input_ready(image_input_ready),
-                    .read_addr(read_addr), .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]));
+                    .read_addr(read_addr), .d_out(layer_1_conv_tmp[8 * (j + 1) - 1:8 * j]),
+                    .qb(conv1_qb[8 * (j + 1) - 1:8 * j]));
             end
         end
     endgenerate
@@ -135,7 +143,8 @@ module GarbageSortTop # (
                 // 第2层卷积
                 Conv2 #(CONV2_HEX_FILE_PATH[544 * (i + 1) - 1:544 * i]) Conv2(.clk(clk), .rst(rst), .d_in(layer_1_conv_tmp), .conv_start(conv_start), .layer_1_input_ready(layer_1_input_ready),
                     .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete), .d_out(layer_2_conv_tmp[i]),
-                    .ram_write_addr(conv_2_ram_write_addr), .conv_2_ready(conv_2_ready), .conv_2_complete(conv_2_complete));
+                    .ram_write_addr(conv_2_ram_write_addr), .conv_2_ready(conv_2_ready), .conv_2_complete(conv_2_complete),
+                    .qb(conv2_qb[8 * (i + 1) - 1:8 * i]));
                 // 第2层卷积缓存
                 Layer2Input Layer2Input(.clk(clk), .rst(rst), .d_in(layer_2_conv_tmp[i]), .conv_start(conv_start), .wr_en(conv_2_ready),
                     .rd_en(layer_3_read_en), .wr_addr(conv_2_ram_write_addr), .rd_addr(layer_3_read_addr), .d_out(layer_2_conv[i]),
@@ -147,7 +156,8 @@ module GarbageSortTop # (
             end
             else begin
                 Conv2 #(CONV2_HEX_FILE_PATH[544 * (i + 1) - 1:544 * i]) Conv2(.clk(clk), .rst(rst), .d_in(layer_1_conv_tmp), .conv_start(conv_start), .layer_1_input_ready(layer_1_input_ready),
-                    .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete), .d_out(layer_2_conv_tmp[i]));
+                    .conv_1_ready(conv_1_ready), .conv_1_complete(conv_1_complete), .d_out(layer_2_conv_tmp[i]),
+                    .qb(conv2_qb[8 * (i + 1) - 1:8 * i]));
                 Layer2Input Layer2Input(.clk(clk), .rst(rst), .d_in(layer_2_conv_tmp[i]), .conv_start(conv_start), .wr_en(conv_2_ready),
                     .rd_en(layer_3_read_en), .wr_addr(conv_2_ram_write_addr), .rd_addr(layer_3_read_addr),
                     .d_out(layer_2_conv[i]));
@@ -171,11 +181,13 @@ module GarbageSortTop # (
                 // 第4层卷积
                 Conv4 #(CONV4_HEX_FILE_PATH[544 * (k + 1) - 1:544 * k]) Conv4(.clk(clk), .rst(rst), .d_in(layer_3_max_tmp), .conv_start(conv_start), .layer_3_input_ready(layer_3_input_ready),
                     .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete), .d_out(layer_4_conv_tmp[8 * (k + 1) - 1:8 * k]),
-                    .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete));
+                    .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete),
+                    .qb(conv4_qb[8 * (k + 1) - 1:8 * k]));
             end
             else begin
                 Conv4 #(CONV4_HEX_FILE_PATH[544 * (k + 1) - 1:544 * k]) Conv4(.clk(clk), .rst(rst), .d_in(layer_3_max_tmp), .conv_start(conv_start), .layer_3_input_ready(layer_3_input_ready),
-                    .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete), .d_out(layer_4_conv_tmp[8 * (k + 1) - 1:8 * k]));
+                    .relu_3_ready(relu_3_ready), .relu_3_complete(relu_3_complete), .d_out(layer_4_conv_tmp[8 * (k + 1) - 1:8 * k]),
+                    .qb(conv4_qb[8 * (k + 1) - 1:8 * k]));
             end
         end
     endgenerate
@@ -194,7 +206,8 @@ module GarbageSortTop # (
                 // 第5层卷积
                 Conv5 #(CONV5_HEX_FILE_PATH[544 * (m + 1) - 1:544 * m]) Conv5(.clk(clk), .rst(rst), .d_in(layer_4_conv_tmp), .conv_start(conv_start), .layer_4_input_ready(layer_4_input_ready),
                     .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete), .d_out(layer_5_conv_tmp[m]),
-                    .ram_write_addr(conv_5_ram_write_addr), .conv_5_ready(conv_5_ready), .conv_5_complete(conv_5_complete));
+                    .ram_write_addr(conv_5_ram_write_addr), .conv_5_ready(conv_5_ready), .conv_5_complete(conv_5_complete),
+                    .qb(conv5_qb[8 * (m + 1) - 1:8 * m]));
                 // 第5层卷积缓存
                 Layer5Input Layer5Input(.clk(clk), .rst(rst), .d_in(layer_5_conv_tmp[m]), .conv_start(conv_start), .wr_en(conv_5_ready),
                     .rd_en(layer_6_read_en), .wr_addr(conv_5_ram_write_addr), .rd_addr(layer_6_read_addr), .d_out(layer_5_conv[m]),
@@ -206,7 +219,8 @@ module GarbageSortTop # (
             end
             else begin
                 Conv5 #(CONV5_HEX_FILE_PATH[544 * (m + 1) - 1:544 * m]) Conv5(.clk(clk), .rst(rst), .d_in(layer_4_conv_tmp), .conv_start(conv_start), .layer_4_input_ready(layer_4_input_ready),
-                    .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete), .d_out(layer_5_conv_tmp[m]));
+                    .conv_4_ready(conv_4_ready), .conv_4_complete(conv_4_complete), .d_out(layer_5_conv_tmp[m]),
+                    .qb(conv5_qb[8 * (m + 1) - 1:8 * m]));
                 Layer5Input Layer5Input(.clk(clk), .rst(rst), .d_in(layer_5_conv_tmp[m]), .conv_start(conv_start), .wr_en(conv_5_ready),
                     .rd_en(layer_6_read_en), .wr_addr(conv_5_ram_write_addr), .rd_addr(layer_6_read_addr),
                     .d_out(layer_5_conv[m]));

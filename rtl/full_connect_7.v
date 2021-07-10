@@ -13,6 +13,11 @@ module FullConnect7 # (
     output full_connect_7_complete
 );
 
+    parameter qb = 8'd0;
+    parameter Zx = 8'd0;
+    parameter M = 8'd1;
+    parameter Za = 8'd0;
+
     // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
     // 设置WAIT_RAM状态是因为从设置addr到d_in需要等一拍
     parameter 
@@ -101,38 +106,38 @@ module FullConnect7 # (
                 end
                 BUSY: begin
                     if(add_count < ram_size) begin
-                        sum <= sum + k5[add_count + 10 * layer_count][7:0] * d_in[7:0] + k5[add_count + 10 * layer_count][15:8] * d_in[15:8]
-                            + k5[add_count + 10 * layer_count][23:16] * d_in[23:16] + k5[add_count + 10 * layer_count][31:24] * d_in[31:24]
-                            + k5[add_count + 10 * layer_count][39:32] * d_in[39:32] + k5[add_count + 10 * layer_count][47:40] * d_in[47:40]
-                            + k5[add_count + 10 * layer_count][55:48] * d_in[55:48] + k5[add_count + 10 * layer_count][63:56] * d_in[63:56]
-                            + k5[add_count + 10 * layer_count][71:64] * d_in[71:64] + k5[add_count + 10 * layer_count][79:72] * d_in[79:72]
-                            + k5[add_count + 10 * layer_count][87:80] * d_in[87:80] + k5[add_count + 10 * layer_count][95:88] * d_in[95:88]
-                            + k5[add_count + 10 * layer_count][103:96] * d_in[103:96] + k5[add_count + 10 * layer_count][111:104] * d_in[111:104]
-                            + k5[add_count + 10 * layer_count][119:112] * d_in[119:112] + k5[add_count + 10 * layer_count][127:120] * d_in[127:120]
-                            + k5[add_count + 10 * layer_count][135:128] * d_in[135:128] + k5[add_count + 10 * layer_count][143:136] * d_in[143:136]
-                            + k5[add_count + 10 * layer_count][151:144] * d_in[151:144] + k5[add_count + 10 * layer_count][159:152] * d_in[159:152]
-                            + k5[add_count + 10 * layer_count][167:160] * d_in[167:160] + k5[add_count + 10 * layer_count][175:168] * d_in[175:168]
-                            + k5[add_count + 10 * layer_count][183:176] * d_in[183:176] + k5[add_count + 10 * layer_count][191:184] * d_in[191:184]
-                            + k5[add_count + 10 * layer_count][199:192] * d_in[199:192] + k5[add_count + 10 * layer_count][207:200] * d_in[207:200]
-                            + k5[add_count + 10 * layer_count][215:208] * d_in[215:208] + k5[add_count + 10 * layer_count][223:216] * d_in[223:216]
-                            + k5[add_count + 10 * layer_count][231:224] * d_in[231:224] + k5[add_count + 10 * layer_count][239:232] * d_in[239:232]
-                            + k5[add_count + 10 * layer_count][247:240] * d_in[247:240] + k5[add_count + 10 * layer_count][255:248] * d_in[255:248]
-                            + k5[add_count + 10 * layer_count][263:256] * d_in[263:256] + k5[add_count + 10 * layer_count][271:264] * d_in[271:264]
-                            + k5[add_count + 10 * layer_count][279:272] * d_in[279:272] + k5[add_count + 10 * layer_count][287:280] * d_in[287:280]
-                            + k5[add_count + 10 * layer_count][295:288] * d_in[295:288] + k5[add_count + 10 * layer_count][303:296] * d_in[303:296]
-                            + k5[add_count + 10 * layer_count][311:304] * d_in[311:304] + k5[add_count + 10 * layer_count][319:312] * d_in[319:312]
-                            + k5[add_count + 10 * layer_count][327:320] * d_in[327:320] + k5[add_count + 10 * layer_count][335:328] * d_in[335:328]
-                            + k5[add_count + 10 * layer_count][343:336] * d_in[343:336] + k5[add_count + 10 * layer_count][351:344] * d_in[351:344]
-                            + k5[add_count + 10 * layer_count][359:352] * d_in[359:352] + k5[add_count + 10 * layer_count][367:360] * d_in[367:360]
-                            + k5[add_count + 10 * layer_count][375:368] * d_in[375:368] + k5[add_count + 10 * layer_count][383:376] * d_in[383:376]
-                            + k5[add_count + 10 * layer_count][391:384] * d_in[391:384] + k5[add_count + 10 * layer_count][399:392] * d_in[399:392]
-                            + k5[add_count + 10 * layer_count][407:400] * d_in[407:400] + k5[add_count + 10 * layer_count][415:408] * d_in[415:408]
-                            + k5[add_count + 10 * layer_count][423:416] * d_in[423:416] + k5[add_count + 10 * layer_count][431:424] * d_in[431:424]
-                            + k5[add_count + 10 * layer_count][439:432] * d_in[439:432] + k5[add_count + 10 * layer_count][447:440] * d_in[447:440]
-                            + k5[add_count + 10 * layer_count][455:448] * d_in[455:448] + k5[add_count + 10 * layer_count][463:456] * d_in[463:456]
-                            + k5[add_count + 10 * layer_count][471:464] * d_in[471:464] + k5[add_count + 10 * layer_count][479:472] * d_in[479:472]
-                            + k5[add_count + 10 * layer_count][487:480] * d_in[487:480] + k5[add_count + 10 * layer_count][495:488] * d_in[495:488]
-                            + k5[add_count + 10 * layer_count][503:496] * d_in[503:496] + k5[add_count + 10 * layer_count][511:504] * d_in[511:504];
+                        sum <= sum + k5[add_count + 10 * layer_count][7:0] * (d_in[7:0] -Zx) + k5[add_count + 10 * layer_count][15:8] * (d_in[15:8] - Zx)
+                            + k5[add_count + 10 * layer_count][23:16] * (d_in[23:16] -Zx) + k5[add_count + 10 * layer_count][31:24] * (d_in[31:24] -Zx)
+                            + k5[add_count + 10 * layer_count][39:32] * (d_in[39:32] -Zx) + k5[add_count + 10 * layer_count][47:40] * (d_in[47:40] -Zx)
+                            + k5[add_count + 10 * layer_count][55:48] * (d_in[55:48] -Zx) + k5[add_count + 10 * layer_count][63:56] * (d_in[63:56] -Zx)
+                            + k5[add_count + 10 * layer_count][71:64] * (d_in[71:64] -Zx) + k5[add_count + 10 * layer_count][79:72] * (d_in[79:72] -Zx)
+                            + k5[add_count + 10 * layer_count][87:80] * (d_in[87:80] -Zx) + k5[add_count + 10 * layer_count][95:88] * (d_in[95:88] -Zx)
+                            + k5[add_count + 10 * layer_count][103:96] * (d_in[103:96] -Zx) + k5[add_count + 10 * layer_count][111:104] * (d_in[111:104] -Zx)
+                            + k5[add_count + 10 * layer_count][119:112] * (d_in[119:112] - Zx) + k5[add_count + 10 * layer_count][127:120] * (d_in[127:120] - Zx)
+                            + k5[add_count + 10 * layer_count][135:128] * (d_in[135:128] - Zx) + k5[add_count + 10 * layer_count][143:136] * (d_in[143:136] - Zx)
+                            + k5[add_count + 10 * layer_count][151:144] * (d_in[151:144] - Zx) + k5[add_count + 10 * layer_count][159:152] * (d_in[159:152] - Zx)
+                            + k5[add_count + 10 * layer_count][167:160] * (d_in[167:160] - Zx) + k5[add_count + 10 * layer_count][175:168] * (d_in[175:168] - Zx)
+                            + k5[add_count + 10 * layer_count][183:176] * (d_in[183:176] - Zx) + k5[add_count + 10 * layer_count][191:184] * (d_in[191:184] - Zx)
+                            + k5[add_count + 10 * layer_count][199:192] * (d_in[199:192] - Zx) + k5[add_count + 10 * layer_count][207:200] * (d_in[207:200] - Zx)
+                            + k5[add_count + 10 * layer_count][215:208] * (d_in[215:208] - Zx) + k5[add_count + 10 * layer_count][223:216] * (d_in[223:216] - Zx)
+                            + k5[add_count + 10 * layer_count][231:224] * (d_in[231:224] - Zx) + k5[add_count + 10 * layer_count][239:232] * (d_in[239:232] - Zx)
+                            + k5[add_count + 10 * layer_count][247:240] * (d_in[247:240] - Zx) + k5[add_count + 10 * layer_count][255:248] * (d_in[255:248] - Zx)
+                            + k5[add_count + 10 * layer_count][263:256] * (d_in[263:256] - Zx) + k5[add_count + 10 * layer_count][271:264] * (d_in[271:264] - Zx)
+                            + k5[add_count + 10 * layer_count][279:272] * (d_in[279:272] - Zx) + k5[add_count + 10 * layer_count][287:280] * (d_in[287:280] - Zx)
+                            + k5[add_count + 10 * layer_count][295:288] * (d_in[295:288] - Zx) + k5[add_count + 10 * layer_count][303:296] * (d_in[303:296] - Zx)
+                            + k5[add_count + 10 * layer_count][311:304] * (d_in[311:304] - Zx) + k5[add_count + 10 * layer_count][319:312] * (d_in[319:312] - Zx)
+                            + k5[add_count + 10 * layer_count][327:320] * (d_in[327:320] - Zx) + k5[add_count + 10 * layer_count][335:328] * (d_in[335:328] - Zx)
+                            + k5[add_count + 10 * layer_count][343:336] * (d_in[343:336] - Zx) + k5[add_count + 10 * layer_count][351:344] * (d_in[351:344] - Zx)
+                            + k5[add_count + 10 * layer_count][359:352] * (d_in[359:352] - Zx) + k5[add_count + 10 * layer_count][367:360] * (d_in[367:360] - Zx)
+                            + k5[add_count + 10 * layer_count][375:368] * (d_in[375:368] - Zx) + k5[add_count + 10 * layer_count][383:376] * (d_in[383:376] - Zx)
+                            + k5[add_count + 10 * layer_count][391:384] * (d_in[391:384] - Zx) + k5[add_count + 10 * layer_count][399:392] * (d_in[399:392] - Zx)
+                            + k5[add_count + 10 * layer_count][407:400] * (d_in[407:400] - Zx) + k5[add_count + 10 * layer_count][415:408] * (d_in[415:408] - Zx)
+                            + k5[add_count + 10 * layer_count][423:416] * (d_in[423:416] - Zx) + k5[add_count + 10 * layer_count][431:424] * (d_in[431:424] - Zx)
+                            + k5[add_count + 10 * layer_count][439:432] * (d_in[439:432] - Zx) + k5[add_count + 10 * layer_count][447:440] * (d_in[447:440] - Zx)
+                            + k5[add_count + 10 * layer_count][455:448] * (d_in[455:448] - Zx) + k5[add_count + 10 * layer_count][463:456] * (d_in[463:456] - Zx)
+                            + k5[add_count + 10 * layer_count][471:464] * (d_in[471:464] - Zx) + k5[add_count + 10 * layer_count][479:472] * (d_in[479:472] - Zx)
+                            + k5[add_count + 10 * layer_count][487:480] * (d_in[487:480] - Zx) + k5[add_count + 10 * layer_count][495:488] * (d_in[495:488] - Zx)
+                            + k5[add_count + 10 * layer_count][503:496] * (d_in[503:496] - Zx) + k5[add_count + 10 * layer_count][511:504] * (d_in[511:504] - Zx);
                         add_count <= add_count + 7'd1;
                         layer_7_read_addr <= layer_7_read_addr < (ram_size - 1'b1)? layer_7_read_addr + 7'd1:7'd0;
                         if(add_count == ram_size - 5'd1) begin
@@ -161,7 +166,7 @@ module FullConnect7 # (
     end
 
     //assign d_out = sum[26:19];
-    assign d_out = sum[7:0];
+    assign d_out = (((sum[7:0] + qb) * M) >> 0) + Za;
 
     assign full_connect_7_complete = layer_count == layer_num;
 

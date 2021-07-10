@@ -11,8 +11,14 @@ module Conv2 # (
     output reg [7:0] d_out,
     output reg [6:0] ram_write_addr = 7'd0,
     output conv_2_ready,
-    output conv_2_complete
+    output conv_2_complete,
+
+    input [7:0] qb
 );
+
+    parameter Zx = 8'd0;
+    parameter M = 8'd1;
+    parameter Za = 8'd0;
 
     // 内置状态机，确保程序可重复执行，conv_1_ready信号置1时表明信号有效
     // layer_1_input_ready信号置1时下一周期开始运算
@@ -181,21 +187,21 @@ module Conv2 # (
     generate
         for(k = 0; k < kernel_count; k = k + 1)
         begin: conv1_mult
-            Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k2[k][63:56]), .d_in_b(mult_data[k][63:56]),
+            Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k2[k][63:56]), .d_in_b(mult_data[k][63:56] - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
-            Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k2[k][55:48]), .d_in_b(mult_data[k][55:48]),
+            Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k2[k][55:48]), .d_in_b(mult_data[k][55:48] - Zx),
                 .start(calculate_begin), .d_out(mult[k + kernel_count]));
-            Mult8 Mult8_3(.clk(clk), .rst(rst), .d_in_a(k2[k][47:40]), .d_in_b(mult_data[k][47:40]),
+            Mult8 Mult8_3(.clk(clk), .rst(rst), .d_in_a(k2[k][47:40]), .d_in_b(mult_data[k][47:40] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 2 * kernel_count]));
-            Mult8 Mult8_4(.clk(clk), .rst(rst), .d_in_a(k2[k][39:32]), .d_in_b(mult_data[k][39:32]),
+            Mult8 Mult8_4(.clk(clk), .rst(rst), .d_in_a(k2[k][39:32]), .d_in_b(mult_data[k][39:32] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 3 * kernel_count]));
-            Mult8 Mult8_5(.clk(clk), .rst(rst), .d_in_a(k2[k][31:24]), .d_in_b(mult_data[k][31:24]),
+            Mult8 Mult8_5(.clk(clk), .rst(rst), .d_in_a(k2[k][31:24]), .d_in_b(mult_data[k][31:24] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 4 * kernel_count]));
-            Mult8 Mult8_6(.clk(clk), .rst(rst), .d_in_a(k2[k][23:16]), .d_in_b(mult_data[k][23:16]),
+            Mult8 Mult8_6(.clk(clk), .rst(rst), .d_in_a(k2[k][23:16]), .d_in_b(mult_data[k][23:16] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 5 * kernel_count]));
-            Mult8 Mult8_7(.clk(clk), .rst(rst), .d_in_a(k2[k][15:8]), .d_in_b(mult_data[k][15:8]),
+            Mult8 Mult8_7(.clk(clk), .rst(rst), .d_in_a(k2[k][15:8]), .d_in_b(mult_data[k][15:8] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 6 * kernel_count]));
-            Mult8 Mult8_8(.clk(clk), .rst(rst), .d_in_a(k2[k][7:0]), .d_in_b(mult_data[k][7:0]),
+            Mult8 Mult8_8(.clk(clk), .rst(rst), .d_in_a(k2[k][7:0]), .d_in_b(mult_data[k][7:0] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 7 * kernel_count]));
         end
     endgenerate
@@ -310,7 +316,7 @@ module Conv2 # (
                         //     d_out <= (adder_36 >> 15) + 8'd1;
                         // else
                         //     d_out <= adder_36 >> 15;
-                        d_out <= adder_36;
+                        d_out <= (((adder_36 + qb) * M) >> 0) + Za;
                     end
                 end
                 GO_ON: begin

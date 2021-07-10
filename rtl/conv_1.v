@@ -9,8 +9,14 @@ module Conv1 # (
     output reg [9:0] read_addr = 10'd0,
     output reg [7:0] d_out,
     output conv_1_ready,
-    output conv_1_complete
+    output conv_1_complete,
+
+    input [7:0] qb
 );
+
+    parameter Zx = 8'd0;
+    parameter M = 8'd1;
+    parameter Za = 8'd0;
 
     // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
     // 增加WAIT_MEMORY状态是因为从memory中读取需要打一拍
@@ -155,11 +161,11 @@ module Conv1 # (
     generate
         for(k = 0; k < kernel_count; k = k + 1)
         begin: conv1_mult
-            Mult8 Mult8_r(.clk(clk), .rst(rst), .d_in_a(k1[k][23:16]), .d_in_b(mult_data[k][23:16]),
+            Mult8 Mult8_r(.clk(clk), .rst(rst), .d_in_a(k1[k][23:16]), .d_in_b(mult_data[k][23:16] - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
-            Mult8 Mult8_g(.clk(clk), .rst(rst), .d_in_a(k1[k][15:8]), .d_in_b(mult_data[k][15:8]),
+            Mult8 Mult8_g(.clk(clk), .rst(rst), .d_in_a(k1[k][15:8]), .d_in_b(mult_data[k][15:8] - Zx),
                 .start(calculate_begin), .d_out(mult[k + kernel_count]));
-            Mult8 Mult8_b(.clk(clk), .rst(rst), .d_in_a(k1[k][7:0]), .d_in_b(mult_data[k][7:0]),
+            Mult8 Mult8_b(.clk(clk), .rst(rst), .d_in_a(k1[k][7:0]), .d_in_b(mult_data[k][7:0] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 2 * kernel_count]));
         end
     endgenerate
@@ -219,7 +225,8 @@ module Conv1 # (
                 //     d_out <= (adder_13 >> 13) + 8'd1;
                 // else
                 //     d_out <= adder_13 >> 13;
-                d_out <= adder_13;
+
+                d_out <= (((adder_13 + qb) * M) >> 0) + Za;
             end
             else begin
                 adder_1 <= 18'd0;

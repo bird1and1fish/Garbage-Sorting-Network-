@@ -10,8 +10,14 @@ module Conv4 # (
     input relu_3_complete,
     output reg [7:0] d_out,
     output conv_4_ready,
-    output conv_4_complete
+    output conv_4_complete,
+
+    input [7:0] qb
 );
+
+    parameter Zx = 8'd0;
+    parameter M = 8'd1;
+    parameter Za = 8'd0;
 
     // 内置状态机，确保程序可重复执行，relu_3_ready信号置1时表明信号有效
     // layer_3_input_ready信号置1时下一周期开始运算
@@ -180,37 +186,37 @@ module Conv4 # (
     generate
         for(k = 0; k < kernel_count; k = k + 1)
         begin: conv1_mult
-            Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k3[k][127:120]), .d_in_b(mult_data[k][127:120]),
+            Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k3[k][127:120]), .d_in_b(mult_data[k][127:120] - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
-            Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k3[k][119:112]), .d_in_b(mult_data[k][119:112]),
+            Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k3[k][119:112]), .d_in_b(mult_data[k][119:112] - Zx),
                 .start(calculate_begin), .d_out(mult[k + kernel_count]));
-            Mult8 Mult8_3(.clk(clk), .rst(rst), .d_in_a(k3[k][111:104]), .d_in_b(mult_data[k][111:104]),
+            Mult8 Mult8_3(.clk(clk), .rst(rst), .d_in_a(k3[k][111:104]), .d_in_b(mult_data[k][111:104] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 2 * kernel_count]));
-            Mult8 Mult8_4(.clk(clk), .rst(rst), .d_in_a(k3[k][103:96]), .d_in_b(mult_data[k][103:96]),
+            Mult8 Mult8_4(.clk(clk), .rst(rst), .d_in_a(k3[k][103:96]), .d_in_b(mult_data[k][103:96] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 3 * kernel_count]));
-            Mult8 Mult8_5(.clk(clk), .rst(rst), .d_in_a(k3[k][95:88]), .d_in_b(mult_data[k][95:88]),
+            Mult8 Mult8_5(.clk(clk), .rst(rst), .d_in_a(k3[k][95:88]), .d_in_b(mult_data[k][95:88] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 4 * kernel_count]));
-            Mult8 Mult8_6(.clk(clk), .rst(rst), .d_in_a(k3[k][87:80]), .d_in_b(mult_data[k][87:80]),
+            Mult8 Mult8_6(.clk(clk), .rst(rst), .d_in_a(k3[k][87:80]), .d_in_b(mult_data[k][87:80] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 5 * kernel_count]));
-            Mult8 Mult8_7(.clk(clk), .rst(rst), .d_in_a(k3[k][79:72]), .d_in_b(mult_data[k][79:72]),
+            Mult8 Mult8_7(.clk(clk), .rst(rst), .d_in_a(k3[k][79:72]), .d_in_b(mult_data[k][79:72] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 6 * kernel_count]));
-            Mult8 Mult8_8(.clk(clk), .rst(rst), .d_in_a(k3[k][71:64]), .d_in_b(mult_data[k][71:64]),
+            Mult8 Mult8_8(.clk(clk), .rst(rst), .d_in_a(k3[k][71:64]), .d_in_b(mult_data[k][71:64] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 7 * kernel_count]));
-            Mult8 Mult8_9(.clk(clk), .rst(rst), .d_in_a(k3[k][63:56]), .d_in_b(mult_data[k][63:56]),
+            Mult8 Mult8_9(.clk(clk), .rst(rst), .d_in_a(k3[k][63:56]), .d_in_b(mult_data[k][63:56] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 8 * kernel_count]));
-            Mult8 Mult8_10(.clk(clk), .rst(rst), .d_in_a(k3[k][55:48]), .d_in_b(mult_data[k][55:48]),
+            Mult8 Mult8_10(.clk(clk), .rst(rst), .d_in_a(k3[k][55:48]), .d_in_b(mult_data[k][55:48] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 9 * kernel_count]));
-            Mult8 Mult8_11(.clk(clk), .rst(rst), .d_in_a(k3[k][47:40]), .d_in_b(mult_data[k][47:40]),
+            Mult8 Mult8_11(.clk(clk), .rst(rst), .d_in_a(k3[k][47:40]), .d_in_b(mult_data[k][47:40] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 10 * kernel_count]));
-            Mult8 Mult8_12(.clk(clk), .rst(rst), .d_in_a(k3[k][39:32]), .d_in_b(mult_data[k][39:32]),
+            Mult8 Mult8_12(.clk(clk), .rst(rst), .d_in_a(k3[k][39:32]), .d_in_b(mult_data[k][39:32] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 11 * kernel_count]));
-            Mult8 Mult8_13(.clk(clk), .rst(rst), .d_in_a(k3[k][31:24]), .d_in_b(mult_data[k][31:24]),
+            Mult8 Mult8_13(.clk(clk), .rst(rst), .d_in_a(k3[k][31:24]), .d_in_b(mult_data[k][31:24] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 12 * kernel_count]));
-            Mult8 Mult8_14(.clk(clk), .rst(rst), .d_in_a(k3[k][23:16]), .d_in_b(mult_data[k][23:16]),
+            Mult8 Mult8_14(.clk(clk), .rst(rst), .d_in_a(k3[k][23:16]), .d_in_b(mult_data[k][23:16] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 13 * kernel_count]));
-            Mult8 Mult8_15(.clk(clk), .rst(rst), .d_in_a(k3[k][15:8]), .d_in_b(mult_data[k][15:8]),
+            Mult8 Mult8_15(.clk(clk), .rst(rst), .d_in_a(k3[k][15:8]), .d_in_b(mult_data[k][15:8] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 14 * kernel_count]));
-            Mult8 Mult8_16(.clk(clk), .rst(rst), .d_in_a(k3[k][7:0]), .d_in_b(mult_data[k][7:0]),
+            Mult8 Mult8_16(.clk(clk), .rst(rst), .d_in_a(k3[k][7:0]), .d_in_b(mult_data[k][7:0] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 15 * kernel_count]));
         end
     endgenerate
@@ -417,7 +423,7 @@ module Conv4 # (
                         //     d_out <= (adder_72 >> 16) + 8'd1;
                         // else
                         //     d_out <= adder_72 >> 16;
-                        d_out <= adder_72;
+                        d_out <= (((adder_72 + qb) * M) >> 0) + Za;
                     end
                 end
                 GO_ON: begin
