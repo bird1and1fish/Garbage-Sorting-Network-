@@ -11,9 +11,7 @@ module Conv2 # (
     output reg [7:0] d_out,
     output reg [6:0] ram_write_addr = 7'd0,
     output conv_2_ready,
-    output conv_2_complete,
-
-    input [7:0] qb
+    output conv_2_complete
 );
 
     parameter Zx = 8'd106;
@@ -182,11 +180,11 @@ module Conv2 # (
     end
 
     // 乘法运算
-    wire [15:0] mult [8 * kernel_count - 1:0];
+    wire [31:0] mult [8 * kernel_count - 1:0];
     genvar k;
     generate
         for(k = 0; k < kernel_count; k = k + 1)
-        begin: conv1_mult
+        begin: conv2_mult
             Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k2[k][63:56]), .d_in_b(mult_data[k][63:56] - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
             Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k2[k][55:48]), .d_in_b(mult_data[k][55:48] - Zx),
@@ -207,56 +205,56 @@ module Conv2 # (
     endgenerate
 
     // 加法运算
-    reg [17:0] adder_1 = 18'd0;
-    reg [17:0] adder_2 = 18'd0;
-    reg [17:0] adder_3 = 18'd0;
-    reg [17:0] adder_4 = 18'd0;
-    reg [17:0] adder_5 = 18'd0;
-    reg [17:0] adder_6 = 18'd0;
-    reg [17:0] adder_7 = 18'd0;
-    reg [17:0] adder_8 = 18'd0;
-    reg [17:0] adder_9 = 18'd0;
-    reg [17:0] adder_10 = 18'd0;
-    reg [17:0] adder_11 = 18'd0;
-    reg [17:0] adder_12 = 18'd0;
-    reg [17:0] adder_13 = 18'd0;
-    reg [17:0] adder_14 = 18'd0;
-    reg [17:0] adder_15 = 18'd0;
-    reg [17:0] adder_16 = 18'd0;
-    reg [17:0] adder_17 = 18'd0;
-    reg [17:0] adder_18 = 18'd0;
-    reg [17:0] adder_19 = 18'd0;
-    reg [17:0] adder_20 = 18'd0;
-    reg [17:0] adder_21 = 18'd0;
-    reg [17:0] adder_22 = 18'd0;
-    reg [17:0] adder_23 = 18'd0;
-    reg [17:0] adder_24 = 18'd0;
+    reg [31:0] adder_1 = 32'd0;
+    reg [31:0] adder_2 = 32'd0;
+    reg [31:0] adder_3 = 32'd0;
+    reg [31:0] adder_4 = 32'd0;
+    reg [31:0] adder_5 = 32'd0;
+    reg [31:0] adder_6 = 32'd0;
+    reg [31:0] adder_7 = 32'd0;
+    reg [31:0] adder_8 = 32'd0;
+    reg [31:0] adder_9 = 32'd0;
+    reg [31:0] adder_10 = 32'd0;
+    reg [31:0] adder_11 = 32'd0;
+    reg [31:0] adder_12 = 32'd0;
+    reg [31:0] adder_13 = 32'd0;
+    reg [31:0] adder_14 = 32'd0;
+    reg [31:0] adder_15 = 32'd0;
+    reg [31:0] adder_16 = 32'd0;
+    reg [31:0] adder_17 = 32'd0;
+    reg [31:0] adder_18 = 32'd0;
+    reg [31:0] adder_19 = 32'd0;
+    reg [31:0] adder_20 = 32'd0;
+    reg [31:0] adder_21 = 32'd0;
+    reg [31:0] adder_22 = 32'd0;
+    reg [31:0] adder_23 = 32'd0;
+    reg [31:0] adder_24 = 32'd0;
 
-    reg [19:0] adder_25 = 20'd0;
-    reg [19:0] adder_26 = 20'd0;
-    reg [19:0] adder_27 = 20'd0;
-    reg [19:0] adder_28 = 20'd0;
-    reg [19:0] adder_29 = 20'd0;
-    reg [19:0] adder_30 = 20'd0;
-    reg [19:0] adder_31 = 20'd0;
-    reg [19:0] adder_32 = 20'd0;
+    reg [31:0] adder_25 = 32'd0;
+    reg [31:0] adder_26 = 32'd0;
+    reg [31:0] adder_27 = 32'd0;
+    reg [31:0] adder_28 = 32'd0;
+    reg [31:0] adder_29 = 32'd0;
+    reg [31:0] adder_30 = 32'd0;
+    reg [31:0] adder_31 = 32'd0;
+    reg [31:0] adder_32 = 32'd0;
     
-    reg [20:0] adder_33 = 21'd0;
-    reg [20:0] adder_34 = 21'd0;
-    reg [20:0] adder_35 = 21'd0;
+    reg [31:0] adder_33 = 32'd0;
+    reg [31:0] adder_34 = 32'd0;
+    reg [31:0] adder_35 = 32'd0;
 
-    reg [22:0] adder_36 = 23'd0;
+    reg [31:0] adder_36 = 32'd0;
 
     always @(posedge clk) begin
         if(!rst) begin
-            adder_1 <= 18'd0; adder_2 <= 18'd0; adder_3 <= 18'd0; adder_4 <= 18'd0; adder_5 <= 18'd0; adder_6 <= 18'd0;
-            adder_7 <= 18'd0; adder_8 <= 18'd0; adder_9 <= 18'd0; adder_10 <= 18'd0; adder_11 <= 18'd0; adder_12 <= 18'd0;
-            adder_13 <= 18'd0; adder_14 <= 18'd0; adder_15 <= 18'd0; adder_16 <= 18'd0; adder_17 <= 18'd0; adder_18 <= 18'd0;
-            adder_19 <= 18'd0; adder_20 <= 18'd0; adder_21 <= 18'd0; adder_22 <= 18'd0; adder_23 <= 18'd0; adder_24 <= 18'd0;
-            adder_25 <= 20'd0; adder_26 <= 20'd0; adder_27 <= 20'd0; adder_28 <= 20'd0; adder_29 <= 20'd0; adder_30 <= 20'd0;
-            adder_31 <= 20'd0; adder_32 <= 20'd0;
-            adder_33 <= 21'd0; adder_34 <= 21'd0; adder_35 <= 21'd0;
-            adder_36 <= 23'd0;
+            adder_1 <= 32'd0; adder_2 <= 32'd0; adder_3 <= 32'd0; adder_4 <= 32'd0; adder_5 <= 32'd0; adder_6 <= 32'd0;
+            adder_7 <= 32'd0; adder_8 <= 32'd0; adder_9 <= 32'd0; adder_10 <= 32'd0; adder_11 <= 32'd0; adder_12 <= 32'd0;
+            adder_13 <= 32'd0; adder_14 <= 32'd0; adder_15 <= 32'd0; adder_16 <= 32'd0; adder_17 <= 32'd0; adder_18 <= 32'd0;
+            adder_19 <= 32'd0; adder_20 <= 32'd0; adder_21 <= 32'd0; adder_22 <= 32'd0; adder_23 <= 32'd0; adder_24 <= 32'd0;
+            adder_25 <= 32'd0; adder_26 <= 32'd0; adder_27 <= 32'd0; adder_28 <= 32'd0; adder_29 <= 32'd0; adder_30 <= 32'd0;
+            adder_31 <= 32'd0; adder_32 <= 32'd0;
+            adder_33 <= 32'd0; adder_34 <= 32'd0; adder_35 <= 32'd0;
+            adder_36 <= 32'd0;
             d_out <= 8'd0;
         end
         else begin
@@ -316,7 +314,7 @@ module Conv2 # (
                         //     d_out <= (adder_36 >> 15) + 8'd1;
                         // else
                         //     d_out <= adder_36 >> 15;
-                        d_out <= (((adder_36 + qb) * M) >> 0) + Za;
+                        d_out <= ((adder_36 * M) >> 16) + Za;
                     end
                 end
                 GO_ON: begin
@@ -374,18 +372,18 @@ module Conv2 # (
                         //     d_out <= (adder_36 >> 15) + 8'd1;
                         // else
                         //     d_out <= adder_36 >> 15;
-                        d_out <= adder_36;
+                        d_out <= ((adder_36 * M) >> 16) + Za;
                     end
                 end
                 default: begin
-                    adder_1 <= 18'd0; adder_2 <= 18'd0; adder_3 <= 18'd0; adder_4 <= 18'd0; adder_5 <= 18'd0; adder_6 <= 18'd0;
-                    adder_7 <= 18'd0; adder_8 <= 18'd0; adder_9 <= 18'd0; adder_10 <= 18'd0; adder_11 <= 18'd0; adder_12 <= 18'd0;
-                    adder_13 <= 18'd0; adder_14 <= 18'd0; adder_15 <= 18'd0; adder_16 <= 18'd0; adder_17 <= 18'd0; adder_18 <= 18'd0;
-                    adder_19 <= 18'd0; adder_20 <= 18'd0; adder_21 <= 18'd0; adder_22 <= 18'd0; adder_23 <= 18'd0; adder_24 <= 18'd0;
-                    adder_25 <= 20'd0; adder_26 <= 20'd0; adder_27 <= 20'd0; adder_28 <= 20'd0; adder_29 <= 20'd0; adder_30 <= 20'd0;
-                    adder_31 <= 20'd0; adder_32 <= 20'd0;
-                    adder_33 <= 21'd0; adder_34 <= 21'd0; adder_35 <= 21'd0;
-                    adder_36 <= 23'd0;
+                    adder_1 <= 32'd0; adder_2 <= 32'd0; adder_3 <= 32'd0; adder_4 <= 32'd0; adder_5 <= 32'd0; adder_6 <= 32'd0;
+                    adder_7 <= 32'd0; adder_8 <= 32'd0; adder_9 <= 32'd0; adder_10 <= 32'd0; adder_11 <= 32'd0; adder_12 <= 32'd0;
+                    adder_13 <= 32'd0; adder_14 <= 32'd0; adder_15 <= 32'd0; adder_16 <= 32'd0; adder_17 <= 32'd0; adder_18 <= 32'd0;
+                    adder_19 <= 32'd0; adder_20 <= 32'd0; adder_21 <= 32'd0; adder_22 <= 32'd0; adder_23 <= 32'd0; adder_24 <= 32'd0;
+                    adder_25 <= 32'd0; adder_26 <= 32'd0; adder_27 <= 32'd0; adder_28 <= 32'd0; adder_29 <= 32'd0; adder_30 <= 32'd0;
+                    adder_31 <= 32'd0; adder_32 <= 32'd0;
+                    adder_33 <= 32'd0; adder_34 <= 32'd0; adder_35 <= 32'd0;
+                    adder_36 <= 32'd0;
                     d_out <= 8'd0;
                 end
             endcase

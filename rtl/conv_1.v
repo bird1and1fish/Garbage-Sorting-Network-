@@ -9,9 +9,7 @@ module Conv1 # (
     output reg [9:0] read_addr = 10'd0,
     output reg [7:0] d_out,
     output conv_1_ready,
-    output conv_1_complete,
-
-    input [7:0] qb
+    output conv_1_complete
 );
 
     parameter Zx = 8'd137;
@@ -156,7 +154,7 @@ module Conv1 # (
     end
 
     // 乘法运算
-    wire [15:0] mult [3 * kernel_count - 1:0];
+    wire [31:0] mult [3 * kernel_count - 1:0];
     genvar k;
     generate
         for(k = 0; k < kernel_count; k = k + 1)
@@ -171,34 +169,34 @@ module Conv1 # (
     endgenerate
 
     // 加法运算
-    reg [17:0] adder_1 = 18'd0;
-    reg [17:0] adder_2 = 18'd0;
-    reg [17:0] adder_3 = 18'd0;
-    reg [17:0] adder_4 = 18'd0;
-    reg [17:0] adder_5 = 18'd0;
-    reg [17:0] adder_6 = 18'd0;
-    reg [17:0] adder_7 = 18'd0;
-    reg [17:0] adder_8 = 18'd0;
-    reg [17:0] adder_9 = 18'd0;
-    reg [19:0] adder_10 = 20'd0;
-    reg [19:0] adder_11 = 20'd0;
-    reg [19:0] adder_12 = 20'd0;
-    reg [20:0] adder_13 = 21'd0;
+    reg [31:0] adder_1 = 32'd0;
+    reg [31:0] adder_2 = 32'd0;
+    reg [31:0] adder_3 = 32'd0;
+    reg [31:0] adder_4 = 32'd0;
+    reg [31:0] adder_5 = 32'd0;
+    reg [31:0] adder_6 = 32'd0;
+    reg [31:0] adder_7 = 32'd0;
+    reg [31:0] adder_8 = 32'd0;
+    reg [31:0] adder_9 = 32'd0;
+    reg [31:0] adder_10 = 32'd0;
+    reg [31:0] adder_11 = 32'd0;
+    reg [31:0] adder_12 = 32'd0;
+    reg [31:0] adder_13 = 32'd0;
     always @(posedge clk) begin
         if(!rst) begin
-            adder_1 <= 18'd0;
-            adder_2 <= 18'd0;
-            adder_3 <= 18'd0;
-            adder_4 <= 18'd0;
-            adder_5 <= 18'd0;
-            adder_6 <= 18'd0;
-            adder_7 <= 18'd0;
-            adder_8 <= 18'd0;
-            adder_9 <= 18'd0;
-            adder_10 <= 20'd0;
-            adder_11 <= 20'd0;
-            adder_12 <= 20'd0;
-            adder_13 <= 21'd0;
+            adder_1 <= 32'd0;
+            adder_2 <= 32'd0;
+            adder_3 <= 32'd0;
+            adder_4 <= 32'd0;
+            adder_5 <= 32'd0;
+            adder_6 <= 32'd0;
+            adder_7 <= 32'd0;
+            adder_8 <= 32'd0;
+            adder_9 <= 32'd0;
+            adder_10 <= 32'd0;
+            adder_11 <= 32'd0;
+            adder_12 <= 32'd0;
+            adder_13 <= 32'd0;
             d_out <= 8'd0;
         end
         else begin
@@ -226,22 +224,22 @@ module Conv1 # (
                 // else
                 //     d_out <= adder_13 >> 13;
 
-                d_out <= (((adder_13 + qb) * M) >> 0) + Za;
+                d_out <= ((adder_13 * M) >> 16) + Za;
             end
             else begin
-                adder_1 <= 18'd0;
-                adder_2 <= 18'd0;
-                adder_3 <= 18'd0;
-                adder_4 <= 18'd0;
-                adder_5 <= 18'd0;
-                adder_6 <= 18'd0;
-                adder_7 <= 18'd0;
-                adder_8 <= 18'd0;
-                adder_9 <= 18'd0;
-                adder_10 <= 20'd0;
-                adder_11 <= 20'd0;
-                adder_12 <= 20'd0;
-                adder_13 <= 21'd0;
+                adder_1 <= 32'd0;
+                adder_2 <= 32'd0;
+                adder_3 <= 32'd0;
+                adder_4 <= 32'd0;
+                adder_5 <= 32'd0;
+                adder_6 <= 32'd0;
+                adder_7 <= 32'd0;
+                adder_8 <= 32'd0;
+                adder_9 <= 32'd0;
+                adder_10 <= 32'd0;
+                adder_11 <= 32'd0;
+                adder_12 <= 32'd0;
+                adder_13 <= 32'd0;
                 d_out <= 8'd0;
             end
         end

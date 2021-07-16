@@ -10,9 +10,7 @@ module Conv4 # (
     input relu_3_complete,
     output reg [7:0] d_out,
     output conv_4_ready,
-    output conv_4_complete,
-
-    input [7:0] qb
+    output conv_4_complete
 );
 
     parameter Zx = 8'd58;
@@ -181,11 +179,11 @@ module Conv4 # (
     end
 
     // 乘法运算
-    wire [15:0] mult [16 * kernel_count - 1:0];
+    wire [31:0] mult [16 * kernel_count - 1:0];
     genvar k;
     generate
         for(k = 0; k < kernel_count; k = k + 1)
-        begin: conv1_mult
+        begin: conv4_mult
             Mult8 Mult8_1(.clk(clk), .rst(rst), .d_in_a(k3[k][127:120]), .d_in_b(mult_data[k][127:120] - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
             Mult8 Mult8_2(.clk(clk), .rst(rst), .d_in_a(k3[k][119:112]), .d_in_b(mult_data[k][119:112] - Zx),
@@ -222,99 +220,99 @@ module Conv4 # (
     endgenerate
 
     // 加法运算
-    reg [17:0] adder_1 = 18'd0;
-    reg [17:0] adder_2 = 18'd0;
-    reg [17:0] adder_3 = 18'd0;
-    reg [17:0] adder_4 = 18'd0;
-    reg [17:0] adder_5 = 18'd0;
-    reg [17:0] adder_6 = 18'd0;
-    reg [17:0] adder_7 = 18'd0;
-    reg [17:0] adder_8 = 18'd0;
-    reg [17:0] adder_9 = 18'd0;
-    reg [17:0] adder_10 = 18'd0;
-    reg [17:0] adder_11 = 18'd0;
-    reg [17:0] adder_12 = 18'd0;
-    reg [17:0] adder_13 = 18'd0;
-    reg [17:0] adder_14 = 18'd0;
-    reg [17:0] adder_15 = 18'd0;
-    reg [17:0] adder_16 = 18'd0;
-    reg [17:0] adder_17 = 18'd0;
-    reg [17:0] adder_18 = 18'd0;
-    reg [17:0] adder_19 = 18'd0;
-    reg [17:0] adder_20 = 18'd0;
-    reg [17:0] adder_21 = 18'd0;
-    reg [17:0] adder_22 = 18'd0;
-    reg [17:0] adder_23 = 18'd0;
-    reg [17:0] adder_24 = 18'd0;
-    reg [17:0] adder_25 = 18'd0;
-    reg [17:0] adder_26 = 18'd0;
-    reg [17:0] adder_27 = 18'd0;
-    reg [17:0] adder_28 = 18'd0;
-    reg [17:0] adder_29 = 18'd0;
-    reg [17:0] adder_30 = 18'd0;
-    reg [17:0] adder_31 = 18'd0;
-    reg [17:0] adder_32 = 18'd0;
-    reg [17:0] adder_33 = 18'd0;
-    reg [17:0] adder_34 = 18'd0;
-    reg [17:0] adder_35 = 18'd0;
-    reg [17:0] adder_36 = 18'd0;
-    reg [17:0] adder_37 = 18'd0;
-    reg [17:0] adder_38 = 18'd0;
-    reg [17:0] adder_39 = 18'd0;
-    reg [17:0] adder_40 = 18'd0;
-    reg [17:0] adder_41 = 18'd0;
-    reg [17:0] adder_42 = 18'd0;
-    reg [17:0] adder_43 = 18'd0;
-    reg [17:0] adder_44 = 18'd0;
-    reg [17:0] adder_45 = 18'd0;
-    reg [17:0] adder_46 = 18'd0;
-    reg [17:0] adder_47 = 18'd0;
-    reg [17:0] adder_48 = 18'd0;
+    reg [31:0] adder_1 = 32'd0;
+    reg [31:0] adder_2 = 32'd0;
+    reg [31:0] adder_3 = 32'd0;
+    reg [31:0] adder_4 = 32'd0;
+    reg [31:0] adder_5 = 32'd0;
+    reg [31:0] adder_6 = 32'd0;
+    reg [31:0] adder_7 = 32'd0;
+    reg [31:0] adder_8 = 32'd0;
+    reg [31:0] adder_9 = 32'd0;
+    reg [31:0] adder_10 = 32'd0;
+    reg [31:0] adder_11 = 32'd0;
+    reg [31:0] adder_12 = 32'd0;
+    reg [31:0] adder_13 = 32'd0;
+    reg [31:0] adder_14 = 32'd0;
+    reg [31:0] adder_15 = 32'd0;
+    reg [31:0] adder_16 = 32'd0;
+    reg [31:0] adder_17 = 32'd0;
+    reg [31:0] adder_18 = 32'd0;
+    reg [31:0] adder_19 = 32'd0;
+    reg [31:0] adder_20 = 32'd0;
+    reg [31:0] adder_21 = 32'd0;
+    reg [31:0] adder_22 = 32'd0;
+    reg [31:0] adder_23 = 32'd0;
+    reg [31:0] adder_24 = 32'd0;
+    reg [31:0] adder_25 = 32'd0;
+    reg [31:0] adder_26 = 32'd0;
+    reg [31:0] adder_27 = 32'd0;
+    reg [31:0] adder_28 = 32'd0;
+    reg [31:0] adder_29 = 32'd0;
+    reg [31:0] adder_30 = 32'd0;
+    reg [31:0] adder_31 = 32'd0;
+    reg [31:0] adder_32 = 32'd0;
+    reg [31:0] adder_33 = 32'd0;
+    reg [31:0] adder_34 = 32'd0;
+    reg [31:0] adder_35 = 32'd0;
+    reg [31:0] adder_36 = 32'd0;
+    reg [31:0] adder_37 = 32'd0;
+    reg [31:0] adder_38 = 32'd0;
+    reg [31:0] adder_39 = 32'd0;
+    reg [31:0] adder_40 = 32'd0;
+    reg [31:0] adder_41 = 32'd0;
+    reg [31:0] adder_42 = 32'd0;
+    reg [31:0] adder_43 = 32'd0;
+    reg [31:0] adder_44 = 32'd0;
+    reg [31:0] adder_45 = 32'd0;
+    reg [31:0] adder_46 = 32'd0;
+    reg [31:0] adder_47 = 32'd0;
+    reg [31:0] adder_48 = 32'd0;
 
-    reg [19:0] adder_49 = 20'd0;
-    reg [19:0] adder_50 = 20'd0;
-    reg [19:0] adder_51 = 20'd0;
-    reg [19:0] adder_52 = 20'd0;
-    reg [19:0] adder_53 = 20'd0;
-    reg [19:0] adder_54 = 20'd0;
-    reg [19:0] adder_55 = 20'd0;
-    reg [19:0] adder_56 = 20'd0;
-    reg [19:0] adder_57 = 20'd0;
-    reg [19:0] adder_58 = 20'd0;
-    reg [19:0] adder_59 = 20'd0;
-    reg [19:0] adder_60 = 20'd0;
-    reg [19:0] adder_61 = 20'd0;
-    reg [19:0] adder_62 = 20'd0;
-    reg [19:0] adder_63 = 20'd0;
-    reg [19:0] adder_64 = 20'd0;
+    reg [31:0] adder_49 = 32'd0;
+    reg [31:0] adder_50 = 32'd0;
+    reg [31:0] adder_51 = 32'd0;
+    reg [31:0] adder_52 = 32'd0;
+    reg [31:0] adder_53 = 32'd0;
+    reg [31:0] adder_54 = 32'd0;
+    reg [31:0] adder_55 = 32'd0;
+    reg [31:0] adder_56 = 32'd0;
+    reg [31:0] adder_57 = 32'd0;
+    reg [31:0] adder_58 = 32'd0;
+    reg [31:0] adder_59 = 32'd0;
+    reg [31:0] adder_60 = 32'd0;
+    reg [31:0] adder_61 = 32'd0;
+    reg [31:0] adder_62 = 32'd0;
+    reg [31:0] adder_63 = 32'd0;
+    reg [31:0] adder_64 = 32'd0;
     
-    reg [20:0] adder_65 = 21'd0;
-    reg [20:0] adder_66 = 21'd0;
-    reg [20:0] adder_67 = 21'd0;
-    reg [20:0] adder_68 = 21'd0;
-    reg [20:0] adder_69 = 21'd0;
+    reg [31:0] adder_65 = 32'd0;
+    reg [31:0] adder_66 = 32'd0;
+    reg [31:0] adder_67 = 32'd0;
+    reg [31:0] adder_68 = 32'd0;
+    reg [31:0] adder_69 = 32'd0;
 
-    reg [22:0] adder_70 = 23'd0;
-    reg [22:0] adder_71 = 23'd0;
+    reg [31:0] adder_70 = 32'd0;
+    reg [31:0] adder_71 = 32'd0;
 
-    reg [23:0] adder_72 = 24'd0;
+    reg [31:0] adder_72 = 32'd0;
 
     always @(posedge clk) begin
         if(!rst) begin
-            adder_1 <= 18'd0; adder_2 <= 18'd0; adder_3 <= 18'd0; adder_4 <= 18'd0; adder_5 <= 18'd0; adder_6 <= 18'd0;
-            adder_7 <= 18'd0; adder_8 <= 18'd0; adder_9 <= 18'd0; adder_10 <= 18'd0; adder_11 <= 18'd0; adder_12 <= 18'd0;
-            adder_13 <= 18'd0; adder_14 <= 18'd0; adder_15 <= 18'd0; adder_16 <= 18'd0; adder_17 <= 18'd0; adder_18 <= 18'd0;
-            adder_19 <= 18'd0; adder_20 <= 18'd0; adder_21 <= 18'd0; adder_22 <= 18'd0; adder_23 <= 18'd0; adder_24 <= 18'd0;
-            adder_25 <= 18'd0; adder_26 <= 18'd0; adder_27 <= 18'd0; adder_28 <= 18'd0; adder_29 <= 18'd0; adder_30 <= 18'd0;
-            adder_31 <= 18'd0; adder_32 <= 18'd0; adder_33 <= 18'd0; adder_34 <= 18'd0; adder_35 <= 18'd0; adder_36 <= 18'd0;
-            adder_37 <= 18'd0; adder_38 <= 18'd0; adder_39 <= 18'd0; adder_40 <= 18'd0; adder_41 <= 18'd0; adder_42 <= 18'd0;
-            adder_43 <= 18'd0; adder_44 <= 18'd0; adder_45 <= 18'd0; adder_46 <= 18'd0; adder_47 <= 18'd0; adder_48 <= 18'd0;
-            adder_49 <= 20'd0; adder_50 <= 20'd0; adder_51 <= 20'd0; adder_52 <= 20'd0; adder_53 <= 20'd0; adder_54 <= 20'd0;
-            adder_55 <= 20'd0; adder_56 <= 20'd0; adder_57 <= 20'd0; adder_58 <= 20'd0; adder_59 <= 20'd0; adder_60 <= 20'd0;
-            adder_61 <= 20'd0; adder_62 <= 20'd0; adder_63 <= 20'd0; adder_64 <= 20'd0;
-            adder_65 <= 21'd0; adder_66 <= 21'd0; adder_67 <= 21'd0; adder_68 <= 21'd0; adder_69 <= 21'd0;
-            adder_70 <= 23'd0; adder_71 <= 23'd0;
-            adder_72 <= 24'd0;
+            adder_1 <= 32'd0; adder_2 <= 32'd0; adder_3 <= 32'd0; adder_4 <= 32'd0; adder_5 <= 32'd0; adder_6 <= 32'd0;
+            adder_7 <= 32'd0; adder_8 <= 32'd0; adder_9 <= 32'd0; adder_10 <= 32'd0; adder_11 <= 32'd0; adder_12 <= 32'd0;
+            adder_13 <= 32'd0; adder_14 <= 32'd0; adder_15 <= 32'd0; adder_16 <= 32'd0; adder_17 <= 32'd0; adder_18 <= 32'd0;
+            adder_19 <= 32'd0; adder_20 <= 32'd0; adder_21 <= 32'd0; adder_22 <= 32'd0; adder_23 <= 32'd0; adder_24 <= 32'd0;
+            adder_25 <= 32'd0; adder_26 <= 32'd0; adder_27 <= 32'd0; adder_28 <= 32'd0; adder_29 <= 32'd0; adder_30 <= 32'd0;
+            adder_31 <= 32'd0; adder_32 <= 32'd0; adder_33 <= 32'd0; adder_34 <= 32'd0; adder_35 <= 32'd0; adder_36 <= 32'd0;
+            adder_37 <= 32'd0; adder_38 <= 32'd0; adder_39 <= 32'd0; adder_40 <= 32'd0; adder_41 <= 32'd0; adder_42 <= 32'd0;
+            adder_43 <= 32'd0; adder_44 <= 32'd0; adder_45 <= 32'd0; adder_46 <= 32'd0; adder_47 <= 32'd0; adder_48 <= 32'd0;
+            adder_49 <= 32'd0; adder_50 <= 32'd0; adder_51 <= 32'd0; adder_52 <= 32'd0; adder_53 <= 32'd0; adder_54 <= 32'd0;
+            adder_55 <= 32'd0; adder_56 <= 32'd0; adder_57 <= 32'd0; adder_58 <= 32'd0; adder_59 <= 32'd0; adder_60 <= 32'd0;
+            adder_61 <= 32'd0; adder_62 <= 32'd0; adder_63 <= 32'd0; adder_64 <= 32'd0;
+            adder_65 <= 32'd0; adder_66 <= 32'd0; adder_67 <= 32'd0; adder_68 <= 32'd0; adder_69 <= 32'd0;
+            adder_70 <= 32'd0; adder_71 <= 32'd0;
+            adder_72 <= 32'd0;
             d_out <= 8'd0;
         end
         else begin
@@ -423,7 +421,7 @@ module Conv4 # (
                         //     d_out <= (adder_72 >> 16) + 8'd1;
                         // else
                         //     d_out <= adder_72 >> 16;
-                        d_out <= (((adder_72 + qb) * M) >> 0) + Za;
+                        d_out <= ((adder_72 * M) >> 16) + Za;
                     end
                 end
                 GO_ON: begin
@@ -530,24 +528,24 @@ module Conv4 # (
                         //     d_out <= (adder_72 >> 16) + 8'd1;
                         // else
                         //     d_out <= adder_72 >> 16;
-                        d_out <= adder_72;
+                        d_out <= ((adder_72 * M) >> 16) + Za;
                     end
                 end
                 default: begin
-                    adder_1 <= 18'd0; adder_2 <= 18'd0; adder_3 <= 18'd0; adder_4 <= 18'd0; adder_5 <= 18'd0; adder_6 <= 18'd0;
-                    adder_7 <= 18'd0; adder_8 <= 18'd0; adder_9 <= 18'd0; adder_10 <= 18'd0; adder_11 <= 18'd0; adder_12 <= 18'd0;
-                    adder_13 <= 18'd0; adder_14 <= 18'd0; adder_15 <= 18'd0; adder_16 <= 18'd0; adder_17 <= 18'd0; adder_18 <= 18'd0;
-                    adder_19 <= 18'd0; adder_20 <= 18'd0; adder_21 <= 18'd0; adder_22 <= 18'd0; adder_23 <= 18'd0; adder_24 <= 18'd0;
-                    adder_25 <= 18'd0; adder_26 <= 18'd0; adder_27 <= 18'd0; adder_28 <= 18'd0; adder_29 <= 18'd0; adder_30 <= 18'd0;
-                    adder_31 <= 18'd0; adder_32 <= 18'd0; adder_33 <= 18'd0; adder_34 <= 18'd0; adder_35 <= 18'd0; adder_36 <= 18'd0;
-                    adder_37 <= 18'd0; adder_38 <= 18'd0; adder_39 <= 18'd0; adder_40 <= 18'd0; adder_41 <= 18'd0; adder_42 <= 18'd0;
-                    adder_43 <= 18'd0; adder_44 <= 18'd0; adder_45 <= 18'd0; adder_46 <= 18'd0; adder_47 <= 18'd0; adder_48 <= 18'd0;
-                    adder_49 <= 20'd0; adder_50 <= 20'd0; adder_51 <= 20'd0; adder_52 <= 20'd0; adder_53 <= 20'd0; adder_54 <= 20'd0;
-                    adder_55 <= 20'd0; adder_56 <= 20'd0; adder_57 <= 20'd0; adder_58 <= 20'd0; adder_59 <= 20'd0; adder_60 <= 20'd0;
-                    adder_61 <= 20'd0; adder_62 <= 20'd0; adder_63 <= 20'd0; adder_64 <= 20'd0;
-                    adder_65 <= 21'd0; adder_66 <= 21'd0; adder_67 <= 21'd0; adder_68 <= 21'd0; adder_69 <= 21'd0;
-                    adder_70 <= 23'd0; adder_71 <= 23'd0;
-                    adder_72 <= 24'd0;
+                    adder_1 <= 32'd0; adder_2 <= 32'd0; adder_3 <= 32'd0; adder_4 <= 32'd0; adder_5 <= 32'd0; adder_6 <= 32'd0;
+                    adder_7 <= 32'd0; adder_8 <= 32'd0; adder_9 <= 32'd0; adder_10 <= 32'd0; adder_11 <= 32'd0; adder_12 <= 32'd0;
+                    adder_13 <= 32'd0; adder_14 <= 32'd0; adder_15 <= 32'd0; adder_16 <= 32'd0; adder_17 <= 32'd0; adder_18 <= 32'd0;
+                    adder_19 <= 32'd0; adder_20 <= 32'd0; adder_21 <= 32'd0; adder_22 <= 32'd0; adder_23 <= 32'd0; adder_24 <= 32'd0;
+                    adder_25 <= 32'd0; adder_26 <= 32'd0; adder_27 <= 32'd0; adder_28 <= 32'd0; adder_29 <= 32'd0; adder_30 <= 32'd0;
+                    adder_31 <= 32'd0; adder_32 <= 32'd0; adder_33 <= 32'd0; adder_34 <= 32'd0; adder_35 <= 32'd0; adder_36 <= 32'd0;
+                    adder_37 <= 32'd0; adder_38 <= 32'd0; adder_39 <= 32'd0; adder_40 <= 32'd0; adder_41 <= 32'd0; adder_42 <= 32'd0;
+                    adder_43 <= 32'd0; adder_44 <= 32'd0; adder_45 <= 32'd0; adder_46 <= 32'd0; adder_47 <= 32'd0; adder_48 <= 32'd0;
+                    adder_49 <= 32'd0; adder_50 <= 32'd0; adder_51 <= 32'd0; adder_52 <= 32'd0; adder_53 <= 32'd0; adder_54 <= 32'd0;
+                    adder_55 <= 32'd0; adder_56 <= 32'd0; adder_57 <= 32'd0; adder_58 <= 32'd0; adder_59 <= 32'd0; adder_60 <= 32'd0;
+                    adder_61 <= 32'd0; adder_62 <= 32'd0; adder_63 <= 32'd0; adder_64 <= 32'd0;
+                    adder_65 <= 32'd0; adder_66 <= 32'd0; adder_67 <= 32'd0; adder_68 <= 32'd0; adder_69 <= 32'd0;
+                    adder_70 <= 32'd0; adder_71 <= 32'd0;
+                    adder_72 <= 32'd0;
                     d_out <= 8'd0;
                 end
             endcase

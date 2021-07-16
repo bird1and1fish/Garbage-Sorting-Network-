@@ -4,21 +4,24 @@ module Mult8(
     input [7:0] d_in_a,
     input [7:0] d_in_b,
     input start,
-    output reg [15:0] d_out
+    output [31:0] d_out
 );
+    reg [15:0] mult;
 
     always @(posedge clk) begin
         if(!rst) begin
-            d_out <= 16'd0;
+            mult <= 16'd0;
         end
         else begin
             if(start) begin
-                d_out <= d_in_a * d_in_b;
+                mult <= {{8{d_in_a[7]}}, d_in_a} * {{8{d_in_b[7]}}, d_in_b};
             end
             else begin
-                d_out <= d_out;
+                mult <= mult;
             end
         end
     end
+
+    assign d_out = {{16{mult[15]}}, mult};
 
 endmodule
