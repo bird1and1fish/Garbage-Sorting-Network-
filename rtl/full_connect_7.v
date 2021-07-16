@@ -14,9 +14,9 @@ module FullConnect7 # (
 );
 
     parameter qb = 8'd0;
-    parameter Zx = 8'd0;
-    parameter M = 8'd1;
-    parameter Za = 8'd0;
+    parameter Zx = 8'd129;
+    parameter M = 8'd39;
+    parameter Za = 8'd116;
 
     // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
     // 设置WAIT_RAM状态是因为从设置addr到d_in需要等一拍

@@ -14,9 +14,9 @@ module Conv1 # (
     input [7:0] qb
 );
 
-    parameter Zx = 8'd0;
-    parameter M = 8'd1;
-    parameter Za = 8'd0;
+    parameter Zx = 8'd137;
+    parameter M = 8'd67;
+    parameter Za = 8'd106;
 
     // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
     // 增加WAIT_MEMORY状态是因为从memory中读取需要打一拍

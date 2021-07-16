@@ -16,9 +16,9 @@ module Conv5 # (
     input [7:0] qb
 );
 
-    parameter Zx = 8'd0;
-    parameter M = 8'd1;
-    parameter Za = 8'd0;
+    parameter Zx = 8'd70;
+    parameter M = 8'd59;
+    parameter Za = 8'd129;
 
     // 内置状态机，确保程序可重复执行，conv_4_ready信号置1时表明信号有效
     // layer_4_input_ready信号置1时下一周期开始运算
