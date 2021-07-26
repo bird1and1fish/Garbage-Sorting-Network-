@@ -66,7 +66,11 @@ module ahb_cnn # (
         memory_buf <= memory[ pixel_idx ];
     end
 
-    wire [23:0] d_in = {memory_buf[15:11], 3'b0, memory_buf[10:5], 2'b0, memory_buf[4:0], 3'b0};
+    wire [7:0] r = (memory_buf[15:11]*128)>>5+127;
+    wire [7:0] g = (memory_buf[10:5]*128)>>6+127;
+    wire [7:0] b = (memory_buf[4:0]*128)>>5+127;
+    
+    wire [23:0] d_in = {r,g,b};
     wire [7:0] net_out;
     wire net_complete;
 

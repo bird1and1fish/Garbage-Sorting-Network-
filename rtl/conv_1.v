@@ -159,11 +159,11 @@ module Conv1 # (
     generate
         for(k = 0; k < kernel_count; k = k + 1)
         begin: conv1_mult
-            Mult8 Mult8_r(.clk(clk), .rst(rst), .d_in_a(k1[k][23:16]), .d_in_b(mult_data[k][23:16] - Zx),
+            Mult9 Mult9_r(.clk(clk), .rst(rst), .d_in_a(k1[k][23:16]), .d_in_b(mult_data[k][23:16] - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
-            Mult8 Mult8_g(.clk(clk), .rst(rst), .d_in_a(k1[k][15:8]), .d_in_b(mult_data[k][15:8] - Zx),
+            Mult9 Mult9_g(.clk(clk), .rst(rst), .d_in_a(k1[k][15:8]), .d_in_b(mult_data[k][15:8] - Zx),
                 .start(calculate_begin), .d_out(mult[k + kernel_count]));
-            Mult8 Mult8_b(.clk(clk), .rst(rst), .d_in_a(k1[k][7:0]), .d_in_b(mult_data[k][7:0] - Zx),
+            Mult9 Mult9_b(.clk(clk), .rst(rst), .d_in_a(k1[k][7:0]), .d_in_b(mult_data[k][7:0] - Zx),
                 .start(calculate_begin), .d_out(mult[k + 2 * kernel_count]));
         end
     endgenerate
