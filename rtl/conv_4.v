@@ -14,8 +14,8 @@ module Conv4 # (
 );
 
     parameter Zx = 8'd58;
-    parameter M = 8'd62;
-    parameter Za = 8'd70;
+    parameter M = 9'd62;
+    parameter Za = 9'd70;
 
     // 内置状态机，确保程序可重复执行，relu_3_ready信号置1时表明信号有效
     // layer_3_input_ready信号置1时下一周期开始运算

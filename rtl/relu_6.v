@@ -146,7 +146,7 @@ module Relu6(
                                     head_addr <= head_addr + pool_stride;
                                 end
                                 else begin
-                                    head_addr <= head_addr == input_raw - pool_stride? input_raw << 1:0;
+                                    head_addr <= head_addr == input_raw - pool_stride? (input_raw << 1):0;
                                     if(line_count < input_line_div) begin
                                         line_count <= line_count + 4'd1;
                                     end
@@ -204,7 +204,7 @@ module Relu6(
                                     head_addr <= head_addr + pool_stride;
                                 end
                                 else begin
-                                    head_addr <= head_addr == input_raw - pool_stride? input_raw << 1:0;
+                                    head_addr <= head_addr == input_raw - pool_stride? (input_raw << 1):0;
                                     if(line_count < input_line_div) begin
                                         line_count <= line_count + 4'd1;
                                     end

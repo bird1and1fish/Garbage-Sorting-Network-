@@ -12,9 +12,9 @@ module Conv1 # (
     output conv_1_complete
 );
 
-    parameter Zx = 8'd137;
-    parameter M = 8'd67;
-    parameter Za = 8'd106;
+    parameter Zx = 9'd137;
+    parameter M = 9'd67;
+    parameter Za = 9'd106;
 
     // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
     // 增加WAIT_MEMORY状态是因为从memory中读取需要打一拍
@@ -159,11 +159,11 @@ module Conv1 # (
     generate
         for(k = 0; k < kernel_count; k = k + 1)
         begin: conv1_mult
-            Mult9 Mult9_r(.clk(clk), .rst(rst), .d_in_a(k1[k][23:16]), .d_in_b(mult_data[k][23:16] - Zx),
+            Mult9 Mult9_r(.clk(clk), .rst(rst), .d_in_a(k1[k][23:16]), .d_in_b({1'b0, mult_data[k][23:16]} - Zx),
                 .start(calculate_begin), .d_out(mult[k]));
-            Mult9 Mult9_g(.clk(clk), .rst(rst), .d_in_a(k1[k][15:8]), .d_in_b(mult_data[k][15:8] - Zx),
+            Mult9 Mult9_g(.clk(clk), .rst(rst), .d_in_a(k1[k][15:8]), .d_in_b({1'b0, mult_data[k][15:8]} - Zx),
                 .start(calculate_begin), .d_out(mult[k + kernel_count]));
-            Mult9 Mult9_b(.clk(clk), .rst(rst), .d_in_a(k1[k][7:0]), .d_in_b(mult_data[k][7:0] - Zx),
+            Mult9 Mult9_b(.clk(clk), .rst(rst), .d_in_a(k1[k][7:0]), .d_in_b({1'b0, mult_data[k][7:0]} - Zx),
                 .start(calculate_begin), .d_out(mult[k + 2 * kernel_count]));
         end
     endgenerate

@@ -38,27 +38,29 @@ module NetOut(
 
     // 通过10个值判断输出
     parameter class_num = 4'd10;
-    reg [7:0] out_temp = 8'd0;
+    reg [7:0] out_temp = 7'd0;
     reg [7:0] max_index = 8'd0;
     reg [3:0] class_count = 4'd0;
     always @(posedge clk) begin
         if(!rst) begin
-            out_temp <= 8'd0;
+            out_temp <= 7'd0;
             max_index <= 8'd0;
             class_count <= 4'd0;
         end
         else begin
             case(state)
                 VACANT: begin
-                    out_temp <= 8'd0;
+                    out_temp <= 7'd0;
                     max_index <= 8'd0;
                     class_count <= 4'd0;
                 end
                 BUSY: begin
                     if(full_connect_7_ready) begin
-                        if(layer_7_out > out_temp) begin
-                            out_temp <= layer_7_out;
-                            max_index <= class_count;
+                        if(!layer_7_out[7]) begin
+                            if(layer_7_out[6:0] > out_temp) begin
+                                out_temp <= layer_7_out[6:0];
+                                max_index <= class_count;
+                            end                            
                         end
                         if(class_count < class_num) begin
                             class_count <= class_count + 4'd1;

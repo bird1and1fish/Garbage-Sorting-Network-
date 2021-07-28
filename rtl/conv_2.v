@@ -15,8 +15,8 @@ module Conv2 # (
 );
 
     parameter Zx = 8'd106;
-    parameter M = 8'd69;
-    parameter Za = 8'd58;
+    parameter M = 9'd69;
+    parameter Za = 9'd58;
 
     // 内置状态机，确保程序可重复执行，conv_1_ready信号置1时表明信号有效
     // layer_1_input_ready信号置1时下一周期开始运算
