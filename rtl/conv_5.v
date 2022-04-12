@@ -117,7 +117,8 @@ module Conv5 # (
     // 从ram中读取3x3x32大小卷积核
     reg [255:0] k4 [0:kernel_count - 1];
     initial begin
-        (*rom_style = "block"*) $readmemh(CONV5_HEX_FILE_PATH, k4);
+        // (*rom_style = "block"*) $readmemh(CONV5_HEX_FILE_PATH, k4);
+        $readmemh(CONV5_HEX_FILE_PATH, k4);
     end
 
     // 读取3x3x32卷积数据

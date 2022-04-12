@@ -67,7 +67,8 @@ module FullConnect7 # (
     parameter ram_size = 5'd16;
     reg [511:0] k5 [0:10 * ram_size - 1];
     initial begin
-        (*rom_style = "block"*) $readmemh(FULLCONNECT7_HEX_FILE_PATH, k5);
+        // (*rom_style = "block"*) $readmemh(FULLCONNECT7_HEX_FILE_PATH, k5);
+        $readmemh(FULLCONNECT7_HEX_FILE_PATH, k5);
     end
 
     // 开始计算卷积
