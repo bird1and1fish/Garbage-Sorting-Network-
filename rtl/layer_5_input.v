@@ -12,7 +12,7 @@ module Layer5Input(
     output reg layer_6_relu_begin = 1'b0
 );
 
-    // 内置状态机，确保程序可重复执行
+    // 内置状态机
     parameter 
         VACANT = 3'd0,
         BUSY = 3'd1;

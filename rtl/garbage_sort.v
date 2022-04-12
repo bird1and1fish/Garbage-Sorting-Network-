@@ -99,15 +99,9 @@ module GarbageSortTop # (
     // 第7层输出完成信号
     wire full_connect_7_complete;
 
-    // 卷积参数qb
-    parameter [63:0] conv1_qb = 64'h00_00_00_00_00_00_00_00;
-    parameter [127:0] conv2_qb = 128'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00;
-    parameter [255:0] conv4_qb = 256'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00;
-    parameter [511:0] conv5_qb = 512'h00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00;
-
     assign net_complete = full_connect_7_complete;
 
-    // 用于确定第1层卷积什么时候开始
+    // 用于确定第1层卷积开始时间
     ImageInput ImageInput(.clk(clk), .rst(rst), .conv_start(conv_start), .image_input_ready(image_input_ready));
 
     // 第1层卷积
@@ -127,7 +121,7 @@ module GarbageSortTop # (
         end
     endgenerate
 
-    // 用于确定第2层卷积什么时候开始
+    // 用于确定第2层卷积开始时间
     Layer1Input Layer1Input(.clk(clk), .rst(rst), .conv_start(conv_start), .conv_1_ready(conv_1_ready),
         .layer_1_input_ready(layer_1_input_ready));
 
@@ -163,7 +157,7 @@ module GarbageSortTop # (
         end
     endgenerate
 
-    // 用于确定第4层卷积什么时候开始
+    // 用于确定第4层卷积开始时间
     Layer3Input Layer3Input(.clk(clk), .rst(rst), .conv_start(conv_start), .relu_3_ready(relu_3_ready),
         .layer_3_input_ready(layer_3_input_ready));
 
@@ -186,7 +180,7 @@ module GarbageSortTop # (
         end
     endgenerate
 
-    // 用于确定第5层卷积什么时候开始
+    // 用于确定第5层卷积开始时间
     Layer4Input Layer4Input(.clk(clk), .rst(rst), .conv_start(conv_start), .conv_4_ready(conv_4_ready),
         .layer_4_input_ready(layer_4_input_ready));
 

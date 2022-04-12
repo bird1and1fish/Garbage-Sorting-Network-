@@ -6,7 +6,7 @@ module Layer4Input(
     output layer_4_input_ready
 );
 
-    // 内置状态机，确保程序可重复执行，conv_4_ready信号置1时表明第四层卷积输出有效
+    // 内置状态机，conv_4_ready信号置1时表明第四层卷积输出有效
     reg layer_4_input_complete = 1'b0;
     parameter 
         VACANT = 3'd0,

@@ -6,7 +6,7 @@ module Layer3Input(
     output layer_3_input_ready
 );
 
-    // 内置状态机，确保程序可重复执行，relu_3_ready信号置1时表明第三层池化输出有效
+    // 内置状态机，relu_3_ready信号置1时表明第三层池化输出有效
     reg layer_3_input_complete = 1'b0;
     parameter 
         VACANT = 3'd0,

@@ -5,7 +5,7 @@ module ImageInput(
     output image_input_ready
 );
 
-    // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
+    // 内置状态机，conv_start信号过一个时钟周期后开始输入图像
     // 增加WAIT_MEMORY状态是因为从memory中读取需要打一拍
     reg image_input_complete = 1'b0;
     parameter 

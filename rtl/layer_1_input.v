@@ -6,7 +6,7 @@ module Layer1Input(
     output layer_1_input_ready
 );
 
-    // 内置状态机，确保程序可重复执行，conv_1_ready信号置1时表明第一层卷积输出有效
+    // 内置状态机，conv_1_ready信号置1时表明第一层卷积输出有效
     reg layer_1_input_complete = 1'b0;
     parameter 
         VACANT = 3'd0,
