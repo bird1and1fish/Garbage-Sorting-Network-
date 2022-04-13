@@ -16,7 +16,7 @@ module Conv1 # (
     parameter M = 9'd67;
     parameter Za = 9'd106;
 
-    // 内置状态机，确保程序可重复执行，conv_start信号过一个时钟周期后开始输入图像
+    // 内置状态机，conv_start信号过一个时钟周期后开始输入图像
     // 增加WAIT_MEMORY状态是因为从memory中读取需要打一拍
     parameter 
         VACANT = 3'd0,
@@ -118,7 +118,7 @@ module Conv1 # (
     reg [23:0] k1 [0:kernel_count - 1];
     initial begin
         //(*rom_style = "block"*) $readmemh(CONV1_HEX_FILE_PATH, k1);
-        (*rom_style = "block"*) $readmemh(CONV1_HEX_FILE_PATH, k1);
+        $readmemh(CONV1_HEX_FILE_PATH, k1);
     end
 
 
